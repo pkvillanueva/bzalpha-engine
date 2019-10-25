@@ -6,7 +6,7 @@ namespace BZAlpha\Core;
  * Setup core.
  */
 function setup() {
-    add_action( 'plugins_loaded', __NAMESPACE__ . '\plugins_loaded' );
+    add_action( 'plugins_loaded', __NAMESPACE__ . '\plugins_loaded', 5 );
 }
 
 /**

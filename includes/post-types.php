@@ -50,13 +50,4 @@ function register_seaman() {
     ];
 
 	register_post_type( 'seaman', $args );
-
-	$meta_args = [
-        'schema'       => null,
-        'get_callback' => function() {
-            return get_fields();
-        }
-    ];
-
-    register_rest_field( 'seaman', 'meta', $meta_args );
 }
