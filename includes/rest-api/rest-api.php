@@ -19,13 +19,25 @@ function setup() {
 function rest_auth( $result ) {
     if ( ! empty( $result ) ) {
         return $result;
-    }
+	}
 
-    // Only allow JWT auth routes publicly.
-    $route = untrailingslashit( $GLOBALS['wp']->query_vars['rest_route'] );
-    if ( ! is_user_logged_in() && 0 !== strpos( $route, '/jwt-auth/v1' ) ) {
-        return new \WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to do that.', 'bzalpha' ), [ 'status' => rest_authorization_required_code() ] );
-    }
+	$route = untrailingslashit( $GLOBALS['wp']->query_vars['rest_route'] );
+
+	// Only allow JWT auth routes publicly.
+	if ( false !== strpos( $route, '/jwt-auth' ) ) {
+		return $result;
+	}
+
+	if ( $_SERVER['REQUEST_METHOD'] === 'GET' && ! is_user_logged_in() ) {
+		return new \WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to do that.', 'bzalpha' ), [ 'status' => rest_authorization_required_code() ] );
+	}
 
     return $result;
 };
+
+/**
+ * Set forbidden.
+ */
+function rest_forbidden() {
+	return new \WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to do that.', 'bzalpha' ), [ 'status' => rest_authorization_required_code() ] );
+}
