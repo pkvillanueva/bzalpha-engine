@@ -18,6 +18,9 @@ class Seaman extends \WP_REST_Posts_Controller {
 
 		// Custom rest fields.
 		$this->register_rest_fields();
+
+		// Filter data before save.
+		$this->register_filters();
 	}
 
 	/**
@@ -31,6 +34,8 @@ class Seaman extends \WP_REST_Posts_Controller {
 			'birth_date',
 			'birth_place',
 			'nationality',
+			'gender',
+			'marital_status',
 			'address',
 			'city',
 			'state',
@@ -39,6 +44,7 @@ class Seaman extends \WP_REST_Posts_Controller {
 			'tel',
 			'phone',
 			'skype',
+			'email',
 			'job_status',
 			'branch',
 			'rank',
@@ -52,7 +58,6 @@ class Seaman extends \WP_REST_Posts_Controller {
 			'shoes_size',
 			'weight',
 			'waist_size',
-			'contacts',
 			'educations',
 			'passports',
 			'visas',
@@ -76,9 +81,33 @@ class Seaman extends \WP_REST_Posts_Controller {
 					return get_field( $meta_name );
 				},
 				'update_callback' => function( $value, $post, $meta_name ) {
+					/**
+					 * Filter values before updating field.
+					 */
+					$value = apply_filters( "update_seaman_{$meta_name}", $value, $post );
+
 					return update_field( $meta_name, $value, $post->ID );
 				}
 			] );
 		}
+	}
+
+	/**
+	 * Register filters.
+	 */
+	public function register_filters() {
+		add_filter( 'update_seaman_documents', function( $documents ) {
+			$new_documents = $documents;
+
+			if ( ! empty( $documents ) ) {
+				foreach ( $documents as $key => $document ) {
+					if ( isset( $document['file']['id'] ) ) {
+						$new_documents[ $key ]['file'] = $document['file']['id'];
+					}
+				}
+			}
+
+			return $new_documents;
+		} );
 	}
 }
