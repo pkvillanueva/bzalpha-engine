@@ -70,7 +70,13 @@ class Seaman extends \WP_REST_Posts_Controller {
 		register_rest_field( 'seaman', 'avatar', [
 			'schema'       => null,
 			'get_callback' => function() {
-				return wp_get_attachment_image_url( get_post_thumbnail_id(), 'thumbnail' );
+				return wp_get_attachment_image_url( get_post_thumbnail_id(), 'medium' );
+			}
+		] );
+
+		register_rest_field( 'seaman', 'featured_image', [
+			'update_callback' => function( $value, $post, $meta_name ) {
+				return set_post_thumbnail( $post->ID, $value );
 			}
 		] );
 
@@ -96,18 +102,38 @@ class Seaman extends \WP_REST_Posts_Controller {
 	 * Register filters.
 	 */
 	public function register_filters() {
-		add_filter( 'update_seaman_documents', function( $documents ) {
-			$new_documents = $documents;
+		add_filter( 'update_seaman_documents', [ $this, '_repeater_files_save' ] );
+		add_filter( 'update_seaman_visas', [ $this, '_repeater_files_save' ] );
+		add_filter( 'update_seaman_passports', [ $this, '_repeater_files_save' ] );
+		add_filter( 'rest_seaman_query', [ $this, '_search_query' ], 10, 2 );
+	}
 
-			if ( ! empty( $documents ) ) {
-				foreach ( $documents as $key => $document ) {
-					if ( isset( $document['file']['id'] ) ) {
-						$new_documents[ $key ]['file'] = $document['file']['id'];
-					}
+	/**
+	 * Repeater files.
+	 */
+	public function _repeater_files_save( $documents ) {
+		$new_documents = $documents;
+
+		if ( ! empty( $documents ) ) {
+			foreach ( $documents as $key => $document ) {
+				if ( isset( $document['file']['id'] ) ) {
+					$new_documents[ $key ]['file'] = $document['file']['id'];
 				}
 			}
+		}
 
-			return $new_documents;
-		} );
+		return $new_documents;
+	}
+
+	/**
+	 * Filter search query.
+	 */
+	public function _search_query( $args, $request ) {
+		if ( isset( $request['job_status'] ) ) {
+			$args['meta_key'] = 'job_status';
+			$args['meta_value'] = $request['job_status'];
+		}
+
+		return $args;
 	}
 }
