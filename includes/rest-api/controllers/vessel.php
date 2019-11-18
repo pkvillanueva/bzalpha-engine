@@ -25,11 +25,12 @@ class Vessel extends \WP_REST_Posts_Controller {
 	 */
 	public function register_rest_fields() {
 		$meta_fields = [
+			'type',
+			'flag',
 			'imo',
 			'mmsi',
-			'type',
 			'grt',
-			'dwt'
+			'dwt',
 		];
 
 		foreach ( $meta_fields as $meta_name ) {
@@ -48,5 +49,28 @@ class Vessel extends \WP_REST_Posts_Controller {
 				}
 			] );
 		}
+
+		register_rest_field( 'vessel', 'principal', [
+			'schema'       => [],
+			'get_callback' => function( $post ) {
+				if ( ! isset( $post['principal'] ) || empty( $post['principal'] ) ) {
+					return [];
+				}
+
+				$principal = array_map( function( $id ) use ( $post ) {
+					$term = get_term( $id, '', ARRAY_A );
+					$term['id'] = $id;
+
+					$custom_fields = get_fields( 'principal_' . $id );
+					if ( ! empty( $custom_fields ) ) {
+						$term = array_merge( $term, $custom_fields );
+					}
+
+					return $term;
+				}, $post['principal'] );
+
+				return $principal;
+			},
+		] );
 	}
 }
