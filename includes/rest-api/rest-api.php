@@ -11,6 +11,8 @@ function setup() {
     // Include files.
     $rest_includes = BZALPHA_INC . 'rest-api/';
     require_once $rest_includes . 'controllers/seaman.php';
+    require_once $rest_includes . 'controllers/vessel.php';
+    require_once $rest_includes . 'controllers/principal.php';
 }
 
 /**
