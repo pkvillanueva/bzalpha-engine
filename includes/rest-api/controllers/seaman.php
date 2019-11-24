@@ -95,7 +95,7 @@ class Seaman extends \WP_REST_Posts_Controller {
 					/**
 					 * Filter values before updating field.
 					 */
-					$value = apply_filters( "update_seaman_{$meta_name}", $value, $post );
+					$value = apply_filters( "bzalpha_update_seaman_{$meta_name}", $value, $post );
 
 					return update_field( $meta_name, $value, $post->ID );
 				}

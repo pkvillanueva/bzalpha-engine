@@ -38,7 +38,7 @@ class Principal extends \WP_REST_Terms_Controller {
 					/**
 					 * Filter values before updating field.
 					 */
-					$value = apply_filters( "update_principal_{$meta_name}", $value, $taxonomy );
+					$value = apply_filters( "bzalpha_update_principal_{$meta_name}", $value, $taxonomy );
 
 					return update_field( $meta_name, $value, $taxonomy );
 				}
