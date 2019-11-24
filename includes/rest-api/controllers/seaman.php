@@ -28,6 +28,15 @@ class Seaman extends \WP_REST_Posts_Controller {
 	 */
 	public function register_rest_fields() {
 		$meta_fields = [
+			// Job
+			'job_status',
+			'vessel',
+			'signed_on',
+			'signed_off',
+			'rank',
+			'min_wage',
+
+			// Personal
 			'first_name',
 			'last_name',
 			'middle_name',
@@ -45,11 +54,6 @@ class Seaman extends \WP_REST_Posts_Controller {
 			'phone',
 			'skype',
 			'email',
-			'job_status',
-			'branch',
-			'rank',
-			'prev_rank',
-			'min_wage',
 			'relatives',
 			'hair_color',
 			'height',
@@ -58,12 +62,13 @@ class Seaman extends \WP_REST_Posts_Controller {
 			'shoes_size',
 			'weight',
 			'waist_size',
+
+			// Others
 			'educations',
 			'passports',
 			'visas',
 			'experiences',
 			'banks',
-			'refs',
 			'documents',
 		];
 
@@ -102,27 +107,7 @@ class Seaman extends \WP_REST_Posts_Controller {
 	 * Register filters.
 	 */
 	public function register_filters() {
-		add_filter( 'update_seaman_documents', [ $this, '_repeater_files_save' ] );
-		add_filter( 'update_seaman_visas', [ $this, '_repeater_files_save' ] );
-		add_filter( 'update_seaman_passports', [ $this, '_repeater_files_save' ] );
 		add_filter( 'rest_seaman_query', [ $this, '_search_query' ], 10, 2 );
-	}
-
-	/**
-	 * Repeater files.
-	 */
-	public function _repeater_files_save( $documents ) {
-		$new_documents = $documents;
-
-		if ( ! empty( $documents ) ) {
-			foreach ( $documents as $key => $document ) {
-				if ( isset( $document['file']['id'] ) ) {
-					$new_documents[ $key ]['file'] = $document['file']['id'];
-				}
-			}
-		}
-
-		return $new_documents;
 	}
 
 	/**
