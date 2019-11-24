@@ -751,9 +751,50 @@
                 "maxlength": ""
             },
             {
-                "key": "field_5d2f838bfd2ba",
-                "label": "Branch",
-                "name": "branch",
+                "key": "field_5ddaab66aaebc",
+                "label": "Vessel",
+                "name": "vessel",
+                "type": "post_object",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "33.333333333",
+                    "class": "",
+                    "id": ""
+                },
+                "post_type": [
+                    "seaman"
+                ],
+                "taxonomy": "",
+                "allow_null": 0,
+                "multiple": 0,
+                "return_format": "object",
+                "ui": 1
+            },
+            {
+                "key": "field_5ddaab88aaebd",
+                "label": "Sign On",
+                "name": "sign_on",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "33.333333333",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_5ddaab94aaebe",
+                "label": "Sign Off",
+                "name": "sign_off",
                 "type": "text",
                 "instructions": "",
                 "required": 0,
@@ -773,25 +814,6 @@
                 "key": "field_5d2f82d2d9dda",
                 "label": "Rank",
                 "name": "rank",
-                "type": "text",
-                "instructions": "",
-                "required": 0,
-                "conditional_logic": 0,
-                "wrapper": {
-                    "width": "33.333333333",
-                    "class": "",
-                    "id": ""
-                },
-                "default_value": "",
-                "placeholder": "",
-                "prepend": "",
-                "append": "",
-                "maxlength": ""
-            },
-            {
-                "key": "field_5d2f8524ae23a",
-                "label": "Previous Rank",
-                "name": "prev_rank",
                 "type": "text",
                 "instructions": "",
                 "required": 0,
@@ -1860,7 +1882,9 @@
                     "class": "",
                     "id": ""
                 },
-                "post_type": "",
+                "post_type": [
+                    "seaman"
+                ],
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 1,
