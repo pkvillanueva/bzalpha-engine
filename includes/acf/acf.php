@@ -773,7 +773,7 @@ function setup() {
 					'id' => '',
 				),
 				'post_type' => array(
-					0 => 'seaman',
+					0 => 'vessel',
 				),
 				'taxonomy' => '',
 				'allow_null' => 0,
