@@ -43,7 +43,7 @@ class Vessel extends \WP_REST_Posts_Controller {
 					/**
 					 * Filter values before updating field.
 					 */
-					$value = apply_filters( "update_vessel_{$meta_name}", $value, $post );
+					$value = apply_filters( "bzalpha_update_vessel_{$meta_name}", $value, $post );
 
 					return update_field( $meta_name, $value, $post->ID );
 				}
