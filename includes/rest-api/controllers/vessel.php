@@ -31,6 +31,9 @@ class Vessel extends \WP_REST_Posts_Controller {
 			'mmsi',
 			'grt',
 			'dwt',
+			'hp',
+			'kw',
+			'engine',
 		];
 
 		foreach ( $meta_fields as $meta_name ) {
