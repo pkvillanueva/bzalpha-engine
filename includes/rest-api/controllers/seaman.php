@@ -69,7 +69,7 @@ class Seaman extends \WP_REST_Posts_Controller {
 			'visas',
 			'experiences',
 			'banks',
-			'documents',
+			'licenses',
 		];
 
 		register_rest_field( 'seaman', 'avatar', [

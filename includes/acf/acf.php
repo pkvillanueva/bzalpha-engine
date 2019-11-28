@@ -974,7 +974,7 @@ function setup() {
 			),
 			array(
 				'key' => 'field_5d41896a1b3fd',
-				'label' => 'Documents',
+				'label' => 'Licenses',
 				'name' => '',
 				'type' => 'tab',
 				'instructions' => '',
@@ -990,8 +990,8 @@ function setup() {
 			),
 			array(
 				'key' => 'field_5d4189721b3fe',
-				'label' => 'Documents',
-				'name' => 'documents',
+				'label' => 'Licenses',
+				'name' => 'licenses',
 				'type' => 'repeater',
 				'instructions' => '',
 				'required' => 0,
