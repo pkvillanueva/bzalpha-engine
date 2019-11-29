@@ -8,6 +8,7 @@ namespace BZAlpha\Post_Types;
 function setup() {
     add_action( 'init', __NAMESPACE__ . '\register_seaman' );
     add_action( 'init', __NAMESPACE__ . '\register_vessel' );
+    add_action( 'init', __NAMESPACE__ . '\register_order' );
 }
 
 /**
@@ -126,4 +127,46 @@ function register_vessel() {
     );
 
     register_taxonomy( 'principal', 'vessel', $tax_args );
+}
+
+/**
+ * Order post type.
+ */
+function register_order() {
+	$labels = [
+		'name'               => _x( 'Orders', 'post type general name', 'bzalpha' ),
+		'singular_name'      => _x( 'Order', 'post type singular name', 'bzalpha' ),
+		'menu_name'          => _x( 'Orders', 'admin menu', 'bzalpha' ),
+		'name_admin_bar'     => _x( 'Order', 'add new on admin bar', 'bzalpha' ),
+		'add_new'            => _x( 'Add New', 'order', 'bzalpha' ),
+		'add_new_item'       => __( 'Add New Order', 'bzalpha' ),
+		'new_item'           => __( 'New Order', 'bzalpha' ),
+		'edit_item'          => __( 'Edit Order', 'bzalpha' ),
+		'view_item'          => __( 'View Order', 'bzalpha' ),
+		'all_items'          => __( 'All Orders', 'bzalpha' ),
+		'search_items'       => __( 'Search Orders', 'bzalpha' ),
+		'parent_item_colon'  => __( 'Parent Orders:', 'bzalpha' ),
+		'not_found'          => __( 'No orders found.', 'bzalpha' ),
+		'not_found_in_trash' => __( 'No orders found in Trash.', 'bzalpha' )
+	];
+
+	$args = [
+		'labels'                => $labels,
+		'description'           => __( 'Description.', 'bzalpha' ),
+		'public'                => true,
+		'publicly_queryable'    => true,
+		'show_ui'               => true,
+		'show_in_menu'          => true,
+		'query_var'             => true,
+		'rewrite'               => [ 'slug' => 'order' ],
+		'capability_type'       => 'post',
+		'has_archive'           => true,
+		'hierarchical'          => false,
+		'menu_position'         => null,
+		'supports'              => [ 'title', 'author', 'thumbnail' ],
+		'show_in_rest'          => true,
+		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\Order',
+	];
+
+	register_post_type( 'order', $args );
 }
