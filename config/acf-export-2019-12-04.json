@@ -1153,9 +1153,9 @@
                 "maxlength": ""
             },
             {
-                "key": "field_5ddaab66aaebc",
-                "label": "Vessel",
-                "name": "vessel",
+                "key": "field_5de7ab84fcee1",
+                "label": "Job Order",
+                "name": "job_order",
                 "type": "post_object",
                 "instructions": "",
                 "required": 0,
@@ -1166,7 +1166,7 @@
                     "id": ""
                 },
                 "post_type": [
-                    "vessel"
+                    "order"
                 ],
                 "taxonomy": "",
                 "allow_null": 0,
@@ -1175,10 +1175,10 @@
                 "ui": 1
             },
             {
-                "key": "field_5ddaab88aaebd",
-                "label": "Sign On",
-                "name": "sign_on",
-                "type": "text",
+                "key": "field_5de7ab99fcee2",
+                "label": "Date Available",
+                "name": "date_available",
+                "type": "date_picker",
                 "instructions": "",
                 "required": 0,
                 "conditional_logic": 0,
@@ -1187,30 +1187,9 @@
                     "class": "",
                     "id": ""
                 },
-                "default_value": "",
-                "placeholder": "",
-                "prepend": "",
-                "append": "",
-                "maxlength": ""
-            },
-            {
-                "key": "field_5ddaab94aaebe",
-                "label": "Sign Off",
-                "name": "sign_off",
-                "type": "text",
-                "instructions": "",
-                "required": 0,
-                "conditional_logic": 0,
-                "wrapper": {
-                    "width": "33.333333333",
-                    "class": "",
-                    "id": ""
-                },
-                "default_value": "",
-                "placeholder": "",
-                "prepend": "",
-                "append": "",
-                "maxlength": ""
+                "display_format": "d\/m\/Y",
+                "return_format": "d\/m\/Y",
+                "first_day": 1
             },
             {
                 "key": "field_5d2f82d2d9dda",
