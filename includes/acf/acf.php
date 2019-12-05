@@ -72,7 +72,9 @@ function setup() {
 						'class' => '',
 						'id' => '',
 					),
-					'post_type' => '',
+					'post_type' => array(
+						0 => 'seaman',
+					),
 					'taxonomy' => '',
 					'allow_null' => 0,
 					'multiple' => 0,
