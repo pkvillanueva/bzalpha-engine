@@ -59,18 +59,32 @@ class Works {
 				'post_type'   => 'order',
 			] );
 
+			if ( ! $post_id || is_wp_error( $post_id ) ) {
+				continue;
+			}
+
 			foreach ( $meta_fields as $meta ) {
 				if ( isset( $request[ $meta ] ) ) {
 					update_field( $meta, $request[ $meta ], $post_id );
 				}
 			}
 
+			// Set initial status.
 			update_field( 'status', 'pending', $post_id );
+
+			// Set position.
 			update_field( 'position', $position, $post_id );
+
+			// Arrange order title.
+			wp_update_post( [
+				'ID'         => $post_id,
+				'post_title' => "Order #{$post_id} [{$position}]"
+			] );
+
 			$data[] = get_post( $post_id );
 		}
 
-		return new WP_REST_Response( $data, 200 );
+		return new \WP_REST_Response( $data, 200 );
 	}
 }
 
