@@ -7,7 +7,7 @@
                 "key": "field_5de13f3b20906",
                 "label": "Status",
                 "name": "status",
-                "type": "text",
+                "type": "select",
                 "instructions": "",
                 "required": 0,
                 "conditional_logic": 0,
@@ -16,11 +16,22 @@
                     "class": "",
                     "id": ""
                 },
-                "default_value": "",
-                "placeholder": "",
-                "prepend": "",
-                "append": "",
-                "maxlength": ""
+                "choices": {
+                    "pending": "Pending",
+                    "processing": "Processing",
+                    "onboard": "Onboard",
+                    "completed": "Completed",
+                    "cancelled": "Cancelled"
+                },
+                "default_value": [
+                    "pending"
+                ],
+                "allow_null": 0,
+                "multiple": 0,
+                "ui": 0,
+                "return_format": "value",
+                "ajax": 0,
+                "placeholder": ""
             },
             {
                 "key": "field_5de144fd526ed",
