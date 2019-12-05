@@ -305,8 +305,27 @@
             },
             {
                 "key": "field_5de1421520913",
-                "label": "Contract",
-                "name": "contract",
+                "label": "Contract Plus",
+                "name": "contract_plus",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_5de923598bef3",
+                "label": "Contract Minus",
+                "name": "contract_minus",
                 "type": "text",
                 "instructions": "",
                 "required": 0,
