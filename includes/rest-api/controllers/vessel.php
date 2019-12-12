@@ -62,18 +62,68 @@ class Vessel extends \WP_REST_Posts_Controller {
 
 				$principal = array_map( function( $id ) use ( $post ) {
 					$term = get_term( $id, '', ARRAY_A );
-					$term['id'] = $id;
 
-					$custom_fields = get_fields( 'principal_' . $id );
-					if ( ! empty( $custom_fields ) ) {
-						$term = array_merge( $term, $custom_fields );
-					}
-
-					return $term;
+					return [
+						'id'   => $id,
+						'name' => $term['name'],
+					];
 				}, $post['principal'] );
 
 				return $principal;
 			},
+		] );
+
+
+		register_rest_field( 'vessel', 'orders', [
+			'schema'       => null,
+			'get_callback' => function( $post ) {
+				$meta_query = [
+					'relation' => 'AND',
+					[
+						'key'     => 'vessel',
+						'compare' => '=',
+						'value'   => $post['id'],
+					],
+					[
+						'relation' => 'OR',
+						[
+							'key'     => 'order_status',
+							'compare' => '=',
+							'value'   => 'pending',
+						],
+						[
+							'key'     => 'order_status',
+							'compare' => '=',
+							'value'   => 'processing',
+						],
+						[
+							'key'     => 'order_status',
+							'compare' => '=',
+							'value'   => 'onboard',
+						],
+					]
+				];
+
+				$orders = get_posts( [
+					'posts_per_page' => -1,
+					'post_type'      => 'bz_order',
+					'meta_query'     => $meta_query,
+				] );
+
+				if ( empty( $orders ) ) {
+					return [];
+				}
+
+				foreach ( $orders as $key => $order ) {
+					$meta           = get_fields( $order->ID, false );
+					$orders[ $key ] = [
+						'id'       => $order->ID,
+						'position' => $meta['position'],
+					];
+				}
+
+				return $orders;
+			}
 		] );
 	}
 }
