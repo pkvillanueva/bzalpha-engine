@@ -14,8 +14,8 @@ function setup() {
 			'fields' => array(
 				array(
 					'key' => 'field_5de13f3b20906',
-					'label' => 'Status',
-					'name' => 'status',
+					'label' => 'Order Status',
+					'name' => 'order_status',
 					'type' => 'select',
 					'instructions' => '',
 					'required' => 0,
