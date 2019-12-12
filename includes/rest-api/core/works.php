@@ -18,7 +18,7 @@ class Works {
 	 * Register routes.
 	 */
 	public function register_routes() {
-		register_rest_route( 'bzalpha/v1', '/order/bulk', [
+		register_rest_route( 'bzalpha/v1', '/bz-order/bulk', [
 			[
 				'methods'  => 'POST',
 				'callback' => [ $this, 'create_bulk_order' ],
@@ -56,7 +56,7 @@ class Works {
 		foreach ( $request['positions'] as $position ) {
 			$post_id = wp_insert_post( [
 				'post_status' => 'publish',
-				'post_type'   => 'order',
+				'post_type'   => 'bz_order',
 			] );
 
 			if ( ! $post_id || is_wp_error( $post_id ) ) {
@@ -70,7 +70,7 @@ class Works {
 			}
 
 			// Set initial status.
-			update_field( 'status', 'pending', $post_id );
+			update_field( 'order_status', 'pending', $post_id );
 
 			// Set position.
 			update_field( 'position', $position, $post_id );

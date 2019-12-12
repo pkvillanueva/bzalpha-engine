@@ -429,7 +429,7 @@ function setup() {
 					array(
 						'param' => 'post_type',
 						'operator' => '==',
-						'value' => 'order',
+						'value' => 'bz_order',
 					),
 				),
 			),

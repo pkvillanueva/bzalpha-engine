@@ -14,6 +14,7 @@ function setup() {
     require_once $rest_includes . 'controllers/seaman.php';
     require_once $rest_includes . 'controllers/vessel.php';
     require_once $rest_includes . 'controllers/principal.php';
+    require_once $rest_includes . 'controllers/bz-order.php';
 }
 
 /**

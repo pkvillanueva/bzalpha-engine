@@ -8,7 +8,7 @@ namespace BZAlpha\Post_Types;
 function setup() {
     add_action( 'init', __NAMESPACE__ . '\register_seaman' );
     add_action( 'init', __NAMESPACE__ . '\register_vessel' );
-    add_action( 'init', __NAMESPACE__ . '\register_order' );
+    add_action( 'init', __NAMESPACE__ . '\register_bz_order' );
 }
 
 /**
@@ -132,7 +132,7 @@ function register_vessel() {
 /**
  * Order post type.
  */
-function register_order() {
+function register_bz_order() {
 	$labels = [
 		'name'               => _x( 'Orders', 'post type general name', 'bzalpha' ),
 		'singular_name'      => _x( 'Order', 'post type singular name', 'bzalpha' ),
@@ -158,15 +158,16 @@ function register_order() {
 		'show_ui'               => true,
 		'show_in_menu'          => true,
 		'query_var'             => true,
-		'rewrite'               => [ 'slug' => 'order' ],
+		'rewrite'               => [ 'slug' => 'bz-order' ],
 		'capability_type'       => 'post',
 		'has_archive'           => true,
 		'hierarchical'          => false,
 		'menu_position'         => null,
 		'supports'              => [ 'title', 'author', 'thumbnail' ],
 		'show_in_rest'          => true,
-		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\Order',
+		'rest_base'             => 'bz-order',
+		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\BZ_Order',
 	];
 
-	register_post_type( 'order', $args );
+	register_post_type( 'bz_order', $args );
 }
