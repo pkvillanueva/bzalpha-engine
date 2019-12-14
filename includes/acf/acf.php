@@ -331,6 +331,28 @@ function setup() {
 							'append' => '',
 							'maxlength' => '',
 						),
+						array(
+							'key' => 'field_5df52fb829a94',
+							'label' => 'Seaman',
+							'name' => 'seaman',
+							'type' => 'post_object',
+							'instructions' => '',
+							'required' => 0,
+							'conditional_logic' => 0,
+							'wrapper' => array(
+								'width' => '',
+								'class' => '',
+								'id' => '',
+							),
+							'post_type' => array(
+								0 => 'seaman',
+							),
+							'taxonomy' => '',
+							'allow_null' => 0,
+							'multiple' => 0,
+							'return_format' => 'object',
+							'ui' => 1,
+						),
 					),
 				),
 				array(
