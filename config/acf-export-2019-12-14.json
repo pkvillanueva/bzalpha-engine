@@ -263,7 +263,7 @@
                         "key": "field_5de1400d2090b",
                         "label": "Status",
                         "name": "status",
-                        "type": "text",
+                        "type": "select",
                         "instructions": "",
                         "required": 0,
                         "conditional_logic": 0,
@@ -272,11 +272,18 @@
                             "class": "",
                             "id": ""
                         },
-                        "default_value": "",
-                        "placeholder": "",
-                        "prepend": "",
-                        "append": "",
-                        "maxlength": ""
+                        "choices": {
+                            "approved": "Approved",
+                            "rejected": "Rejected",
+                            "waiting": "Waiting"
+                        },
+                        "default_value": [],
+                        "allow_null": 0,
+                        "multiple": 0,
+                        "ui": 0,
+                        "return_format": "value",
+                        "ajax": 0,
+                        "placeholder": ""
                     },
                     {
                         "key": "field_5de140942090d",
