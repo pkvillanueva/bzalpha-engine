@@ -18,6 +18,9 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 
 		// Custom rest fields.
 		$this->register_rest_fields();
+
+		// Register actions.
+		add_filter( 'rest_bz_order_query', [ $this, '_search_query' ], 10, 2 );
 	}
 
 	/**
@@ -60,5 +63,41 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 				}
 			] );
 		}
+	}
+
+	/**
+	 * Filter search query.
+	 */
+	public function _search_query( $args, $request ) {
+		if ( isset( $request['vessel'] ) ) {
+			$args['meta_query'] = [
+				'relation' => 'AND',
+				[
+					'key'     => 'vessel',
+					'compare' => '=',
+					'value'   => $request['vessel'],
+				],
+				[
+					'relation' => 'OR',
+					[
+						'key'     => 'order_status',
+						'compare' => '=',
+						'value'   => 'pending',
+					],
+					[
+						'key'     => 'order_status',
+						'compare' => '=',
+						'value'   => 'processing',
+					],
+					[
+						'key'     => 'order_status',
+						'compare' => '=',
+						'value'   => 'onboard',
+					],
+				]
+			];
+		}
+
+		return $args;
 	}
 }
