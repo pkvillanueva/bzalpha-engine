@@ -47,7 +47,7 @@
                     "id": ""
                 },
                 "display_format": "d\/m\/Y",
-                "return_format": "d\/m\/Y",
+                "return_format": "Y-m-d",
                 "first_day": 1
             },
             {
@@ -105,7 +105,7 @@
                     "id": ""
                 },
                 "display_format": "d\/m\/Y",
-                "return_format": "d\/m\/Y",
+                "return_format": "Y-m-d",
                 "first_day": 1
             },
             {
@@ -122,7 +122,7 @@
                     "id": ""
                 },
                 "display_format": "d\/m\/Y",
-                "return_format": "d\/m\/Y",
+                "return_format": "Y-m-d",
                 "first_day": 1
             },
             {
@@ -256,7 +256,7 @@
                             "id": ""
                         },
                         "display_format": "d\/m\/Y",
-                        "return_format": "d\/m\/Y",
+                        "return_format": "Y-m-d",
                         "first_day": 1
                     },
                     {
@@ -1143,7 +1143,7 @@
                             "id": ""
                         },
                         "display_format": "d\/m\/Y",
-                        "return_format": "d\/m\/Y",
+                        "return_format": "Y-m-d",
                         "first_day": 1
                     },
                     {
@@ -1257,7 +1257,7 @@
                     "id": ""
                 },
                 "display_format": "d\/m\/Y",
-                "return_format": "d\/m\/Y",
+                "return_format": "Y-m-d",
                 "first_day": 1
             },
             {
