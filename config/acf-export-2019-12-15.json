@@ -286,23 +286,6 @@
                         "placeholder": ""
                     },
                     {
-                        "key": "field_5de140942090d",
-                        "label": "Date",
-                        "name": "date",
-                        "type": "date_picker",
-                        "instructions": "",
-                        "required": 0,
-                        "conditional_logic": 0,
-                        "wrapper": {
-                            "width": "",
-                            "class": "",
-                            "id": ""
-                        },
-                        "display_format": "d\/m\/Y",
-                        "return_format": "d\/m\/Y",
-                        "first_day": 1
-                    },
-                    {
                         "key": "field_5de141d320912",
                         "label": "Remark",
                         "name": "remark",
@@ -342,6 +325,31 @@
                         "multiple": 0,
                         "return_format": "object",
                         "ui": 1
+                    },
+                    {
+                        "key": "field_5df5d2bcc3243",
+                        "label": "Type",
+                        "name": "type",
+                        "type": "select",
+                        "instructions": "",
+                        "required": 0,
+                        "conditional_logic": 0,
+                        "wrapper": {
+                            "width": "",
+                            "class": "",
+                            "id": ""
+                        },
+                        "choices": {
+                            "proposed": "Proposed",
+                            "requested": "Requested"
+                        },
+                        "default_value": [],
+                        "allow_null": 0,
+                        "multiple": 0,
+                        "ui": 0,
+                        "return_format": "value",
+                        "ajax": 0,
+                        "placeholder": ""
                     }
                 ]
             },
