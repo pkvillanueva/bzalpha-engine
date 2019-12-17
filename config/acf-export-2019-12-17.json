@@ -21,7 +21,8 @@
                     "processing": "Processing",
                     "onboard": "Onboard",
                     "completed": "Completed",
-                    "cancelled": "Cancelled"
+                    "cancelled": "Cancelled",
+                    "reserved": "Reserved"
                 },
                 "default_value": [
                     "pending"
@@ -129,6 +130,25 @@
                 "key": "field_5de1423e20914",
                 "label": "Port",
                 "name": "port",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
+                "key": "field_5df923d7bb2ab",
+                "label": "Return Port",
+                "name": "return_port",
                 "type": "text",
                 "instructions": "",
                 "required": 0,

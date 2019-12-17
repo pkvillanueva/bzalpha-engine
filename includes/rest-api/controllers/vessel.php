@@ -117,8 +117,9 @@ class Vessel extends \WP_REST_Posts_Controller {
 				foreach ( $orders as $key => $order ) {
 					$meta           = get_fields( $order->ID, false );
 					$orders[ $key ] = [
-						'id'       => $order->ID,
-						'position' => $meta['position'],
+						'id'           => $order->ID,
+						'position'     => $meta['position'],
+						'order_status' => $meta['order_status'],
 					];
 				}
 
