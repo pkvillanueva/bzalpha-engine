@@ -34,7 +34,7 @@ class Works {
 			return new \WP_Error( 'invalid_route', 'Invalid route.', [ 'status' => 404 ] );
 		}
 
-		if ( empty( $request['vessel'] ) || ! is_array( $request['positions' ] ) || empty( $request['positions'] ) || empty( $request['sign_on'] ) ) {
+		if ( empty( $request['vessel'] ) || ! is_array( $request['positions' ] ) || empty( $request['positions'] ) ) {
 			return new \WP_Error( 'invalid_params', 'Invalid params.', [ 'status' => 404 ] );
 		}
 
