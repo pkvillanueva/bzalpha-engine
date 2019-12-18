@@ -35,6 +35,7 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 			'sign_on',
 			'sign_off',
 			'port',
+			'return_port',
 			'remark',
 			'wage',
 			'currency',

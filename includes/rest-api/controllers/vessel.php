@@ -105,9 +105,12 @@ class Vessel extends \WP_REST_Posts_Controller {
 				];
 
 				$orders = get_posts( [
-					'posts_per_page' => -1,
-					'post_type'      => 'bz_order',
-					'meta_query'     => $meta_query,
+					'posts_per_page'   => -1,
+					'post_type'        => 'bz_order',
+					'meta_query'       => $meta_query,
+					'orderby'          => 'date',
+					'order'            => 'DESC',
+					'suppress_filters' => true,
 				] );
 
 				if ( empty( $orders ) ) {
@@ -120,6 +123,7 @@ class Vessel extends \WP_REST_Posts_Controller {
 						'id'           => $order->ID,
 						'position'     => $meta['position'],
 						'order_status' => $meta['order_status'],
+						'sign_off'     => $meta['sign_off'],
 					];
 				}
 
