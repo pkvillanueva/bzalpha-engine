@@ -108,7 +108,7 @@ class Vessel extends \WP_REST_Posts_Controller {
 					'posts_per_page'   => -1,
 					'post_type'        => 'bz_order',
 					'meta_query'       => $meta_query,
-					'orderby'          => 'date',
+					'orderby'          => 'ID',
 					'order'            => 'DESC',
 					'suppress_filters' => true,
 				] );
@@ -118,12 +118,11 @@ class Vessel extends \WP_REST_Posts_Controller {
 				}
 
 				foreach ( $orders as $key => $order ) {
-					$meta           = get_fields( $order->ID, false );
 					$orders[ $key ] = [
 						'id'           => $order->ID,
-						'position'     => $meta['position'],
-						'order_status' => $meta['order_status'],
-						'sign_off'     => $meta['sign_off'],
+						'position'     => get_field( 'position', $order->ID ),
+						'order_status' => get_field( 'order_status', $order->ID ),
+						'sign_off'     => get_field( 'sign_off', $order->ID ),
 					];
 				}
 
