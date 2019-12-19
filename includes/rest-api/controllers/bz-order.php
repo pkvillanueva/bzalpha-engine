@@ -21,6 +21,7 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 
 		// Register actions.
 		add_filter( 'rest_bz_order_query', [ $this, '_search_query' ], 10, 2 );
+		add_filter( 'rest_after_insert_bz_order', [ $this, '_after_insert' ], 10, 2 );
 	}
 
 	/**
@@ -43,7 +44,6 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 			'candidates',
 			'contract_plus',
 			'contract_minus',
-			'bind_order',
 			'flight_status',
 			'uniform',
 		];
@@ -64,6 +64,21 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 				}
 			] );
 		}
+
+		register_rest_field( 'bz_order', 'bind_order', [
+			'schema'       => null,
+			'get_callback' => function() {
+				$bind_order = get_field( 'bind_order' );
+
+				if ( empty( $bind_order ) ) {
+					return null;
+				}
+
+				return array_merge( get_fields( $bind_order->ID ), [
+					'id' => $bind_order->ID,
+				] );
+			}
+		] );
 	}
 
 	/**
@@ -100,5 +115,24 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Filter after insert.
+	 */
+	public function _after_insert( $post, $request ) {
+		if ( isset( $request['position'] ) ) {
+			$position = $request['position'];
+
+			wp_update_post( [
+				'ID'         => $post->ID,
+				'post_title' => "Order #{$post->ID} [{$position}]",
+			] );
+		}
+
+		if ( isset( $request['parent_order'] ) ) {
+			update_field( 'bind_order', $post->ID, intval( $request['parent_order'] ) );
+			update_field( 'candidates', [], intval( $request['parent_order'] ) );
+		}
 	}
 }
