@@ -425,7 +425,7 @@
                     "id": ""
                 },
                 "post_type": [
-                    "order"
+                    "bz_order"
                 ],
                 "taxonomy": "",
                 "allow_null": 0,

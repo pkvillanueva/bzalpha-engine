@@ -436,7 +436,7 @@ function setup() {
 						'id' => '',
 					),
 					'post_type' => array(
-						0 => 'order',
+						0 => 'bz_order',
 					),
 					'taxonomy' => '',
 					'allow_null' => 0,
