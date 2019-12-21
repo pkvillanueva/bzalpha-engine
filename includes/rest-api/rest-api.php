@@ -69,7 +69,16 @@ function rest_fields() {
 				register_rest_field( $post_type, $meta_name, [
 					'schema'       => null,
 					'get_callback' => function() use ( $field_key ) {
-						return \bzalpha_get_field( $field_key );
+						$value = \bzalpha_get_field( $field_key );
+
+						if ( $value instanceof \WP_Post ) {
+							return array_merge( bzalpha_get_fields( $value->ID ), [
+								'ID' => $value->ID,
+								'post_title' => $value->post_title,
+							] );
+						}
+
+						return $value;
 					},
 					'update_callback' => function( $value, $post ) use ( $field_key ) {
 						return \bzalpha_update_field( $field_key, $value, $post->ID );
