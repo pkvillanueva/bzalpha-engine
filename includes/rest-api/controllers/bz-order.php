@@ -72,9 +72,9 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 		if ( isset( $request['parent_order' ] ) ) {
 			$parent_order = intval( $request['parent_order' ] );
 
-			bzaalpha_update_field( 'child_order', $post->ID, $parent_order );
-			bzaalpha_update_field( 'candidates', [], $parent_order );
-			bzaalpha_update_field( 'parent_order', $parent_order, $post->ID );
+			bzalpha_update_field( 'child_order', $post->ID, $parent_order );
+			bzalpha_update_field( 'candidates', [], $parent_order );
+			bzalpha_update_field( 'parent_order', $parent_order, $post->ID );
 		}
 	}
 
