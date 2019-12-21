@@ -70,7 +70,7 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "id",
+                "return_format": "object",
                 "ui": 1
             },
             {
@@ -240,7 +240,7 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "id",
+                "return_format": "object",
                 "ui": 1
             },
             {
@@ -430,7 +430,7 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "id",
+                "return_format": "object",
                 "ui": 1
             },
             {
@@ -452,7 +452,7 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "id",
+                "return_format": "object",
                 "ui": 1
             },
             {
