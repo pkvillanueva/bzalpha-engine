@@ -21,7 +21,21 @@ class Works {
 		register_rest_route( 'bzalpha/v1', '/bz-order/bulk', [
 			[
 				'methods'  => 'POST',
-				'callback' => [ $this, 'create_bulk_order' ],
+				'callback' => [ $this, 'rest_bulk' ],
+				'args'     => [
+					'vessel' => [
+						'description' => __( 'Set the vessel for orders.' ),
+						'type'        => 'integer',
+						'required'    => true,
+					],
+					'positions' => [
+						'description' => __( 'Set to create position orders.' ),
+						'type'        => 'array',
+						'required'    => true,
+					],
+				]
+			]
+		] );
 			]
 		] );
 	}
@@ -29,19 +43,14 @@ class Works {
 	/**
 	 * Create order.
 	 */
-	public function create_bulk_order( $request ) {
+	public function rest_bulk( $request ) {
 		if ( ! function_exists( 'acf' ) ) {
 			return new \WP_Error( 'invalid_route', 'Invalid route.', [ 'status' => 404 ] );
-		}
-
-		if ( empty( $request['vessel'] ) || ! is_array( $request['positions' ] ) || empty( $request['positions'] ) ) {
-			return new \WP_Error( 'invalid_params', 'Invalid params.', [ 'status' => 404 ] );
 		}
 
 		$data = [];
 
 		$meta_fields = [
-			'vessel',
 			'wage',
 			'currency',
 			'port',
@@ -65,20 +74,17 @@ class Works {
 
 			foreach ( $meta_fields as $meta ) {
 				if ( isset( $request[ $meta ] ) ) {
-					update_field( $meta, $request[ $meta ], $post_id );
+					bzalpha_update_field( $meta, $request[ $meta ], $post_id );
 				}
 			}
 
-			// Set initial status.
-			update_field( 'order_status', 'pending', $post_id );
+			bzalpha_update_field( 'vessel', $request['vessel'], $post_id );
+			bzalpha_update_field( 'order_status', 'pending', $post_id );
+			bzalpha_update_field( 'position', $position, $post_id );
 
-			// Set position.
-			update_field( 'position', $position, $post_id );
-
-			// Arrange order title.
 			wp_update_post( [
 				'ID'         => $post_id,
-				'post_title' => "Order #{$post_id} [{$position}]"
+				'post_title' => "Order #{$post_id} [{$position}]",
 			] );
 
 			$data[] = get_post( $post_id );
