@@ -12,11 +12,9 @@ class Vessel extends \WP_REST_Posts_Controller {
 	 */
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
-
-		// Custom namespace.
 		$this->namespace = 'bzalpha/v1';
 
-		// Custom rest fields.
+		// Register actions.
 		$this->register_rest_fields();
 	}
 
@@ -24,37 +22,8 @@ class Vessel extends \WP_REST_Posts_Controller {
 	 * Register rest fields.
 	 */
 	public function register_rest_fields() {
-		$meta_fields = [
-			'type',
-			'flag',
-			'imo',
-			'mmsi',
-			'grt',
-			'dwt',
-			'hp',
-			'kw',
-			'engine',
-		];
-
-		foreach ( $meta_fields as $meta_name ) {
-			register_rest_field( 'vessel', $meta_name, [
-				'schema'       => null,
-				'get_callback' => function() use ( $meta_name ) {
-					return get_field( $meta_name );
-				},
-				'update_callback' => function( $value, $post, $meta_name ) {
-					/**
-					 * Filter values before updating field.
-					 */
-					$value = apply_filters( "bzalpha_update_vessel_{$meta_name}", $value, $post );
-
-					return update_field( $meta_name, $value, $post->ID );
-				}
-			] );
-		}
-
 		register_rest_field( 'vessel', 'principal', [
-			'schema'       => [],
+			'schema'       => null,
 			'get_callback' => function( $post ) {
 				if ( ! isset( $post['principal'] ) || empty( $post['principal'] ) ) {
 					return [];
@@ -72,7 +41,6 @@ class Vessel extends \WP_REST_Posts_Controller {
 				return $principal;
 			},
 		] );
-
 
 		register_rest_field( 'vessel', 'orders', [
 			'schema'       => null,
@@ -120,9 +88,9 @@ class Vessel extends \WP_REST_Posts_Controller {
 				foreach ( $orders as $key => $order ) {
 					$orders[ $key ] = [
 						'id'           => $order->ID,
-						'position'     => get_field( 'position', $order->ID ),
-						'order_status' => get_field( 'order_status', $order->ID ),
-						'sign_off'     => get_field( 'sign_off', $order->ID ),
+						'position'     => bzalpha_get_field( 'position', $order->ID ),
+						'order_status' => bzalpha_get_field( 'order_status', $order->ID ),
+						'sign_off'     => bzalpha_get_field( 'sign_off', $order->ID ),
 					];
 				}
 
