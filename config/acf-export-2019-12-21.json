@@ -70,7 +70,7 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "object",
+                "return_format": "id",
                 "ui": 1
             },
             {
@@ -240,7 +240,7 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "object",
+                "return_format": "id",
                 "ui": 1
             },
             {
@@ -413,8 +413,8 @@
             },
             {
                 "key": "field_5de142b820915",
-                "label": "Bind Order",
-                "name": "bind_order",
+                "label": "Child Order",
+                "name": "child_order",
                 "type": "post_object",
                 "instructions": "",
                 "required": 0,
@@ -430,7 +430,29 @@
                 "taxonomy": "",
                 "allow_null": 0,
                 "multiple": 0,
-                "return_format": "object",
+                "return_format": "id",
+                "ui": 1
+            },
+            {
+                "key": "field_5dfd0b0d69363",
+                "label": "Parent Order",
+                "name": "parent_order",
+                "type": "post_object",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "post_type": [
+                    "bz_order"
+                ],
+                "taxonomy": "",
+                "allow_null": 0,
+                "multiple": 0,
+                "return_format": "id",
                 "ui": 1
             },
             {
