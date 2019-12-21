@@ -36,6 +36,18 @@ class Works {
 				]
 			]
 		] );
+
+		register_rest_route( 'bzalpha/v1', '/bz-order/close', [
+			[
+				'methods'  => 'POST',
+				'callback' => [ $this, 'rest_close' ],
+				'args'     => [
+					'id' => [
+						'description' => __( 'Set order ID to close.' ),
+						'type'        => 'integer',
+						'required'    => true,
+					],
+				]
 			]
 		] );
 	}
@@ -91,6 +103,47 @@ class Works {
 		}
 
 		return new \WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Switch order.
+	 */
+	public function rest_switch( $request ) {
+		if ( ! function_exists( 'acf' ) ) {
+			return new \WP_Error( 'invalid_route', 'Invalid route.', [ 'status' => 404 ] );
+		} elseif ( empty( $request['id'] ) ) {
+			return new \WP_Error( 'invalid_params', 'Invalid params.', [ 'status' => 404 ] );
+		} elseif ( get_post_status( $request['id'] ) !== 'publish' ) {
+			return new \WP_Error( 'invalid_request', 'Order not found.', [ 'status' => 404 ] );
+		}
+
+		$order_id = intval( $request['id'] );
+
+		$child_order = bzalpha_update_field( 'child_order', $order_id );
+		if ( ! $child_order || get_post_status( $child_order ) !== 'publish' ) {
+			return new \WP_Error( 'invalid_request', 'Child order not found.', [ 'status' => 404 ] );
+		}
+
+		$seaman = bzalpha_update_field( 'seaman', $order_id );
+		if ( ! $seaman || get_post_status( $seaman ) !== 'publish' ) {
+			return new \WP_Error( 'invalid_request', 'Seaman not found.', [ 'status' => 404 ] );
+		}
+
+		$vessel = bzalpha_update_field( 'seaman', $order_id );
+		if ( ! $vessel || get_post_status( $vessel ) !== 'publish' ) {
+			return new \WP_Error( 'invalid_request', 'Vessel not found.', [ 'status' => 404 ] );
+		}
+
+		// Complete the order.
+		bzalpha_update_field( 'order_status', 'completed', $request['id'] );
+
+		// Replace the current order by the child one.
+		bzalpha_update_field( 'order_status', 'onboard', $child_order );
+
+		// Get child order fields.
+		$fields = get_fields( $child_order );
+
+		return $child_order;
 	}
 }
 
