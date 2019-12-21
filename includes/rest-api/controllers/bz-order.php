@@ -69,9 +69,13 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 			] );
 		}
 
-		// 		update_field( 'child_order', $post->ID, $value );
-		// 		update_field( 'candidates', [], $value );
-		// 		return update_field( $meta_name, $value, $post->ID );
+		if ( isset( $request['parent_order' ] ) ) {
+			$parent_order = intval( $request['parent_order' ] );
+
+			bzaalpha_update_field( 'child_order', $post->ID, $parent_order );
+			bzaalpha_update_field( 'candidates', [], $parent_order );
+			bzaalpha_update_field( 'parent_order', $parent_order, $post->ID );
+		}
 	}
 
 	/**
@@ -85,7 +89,7 @@ class BZ_Order extends \WP_REST_Posts_Controller {
 		$data = $response->data;
 
 		if ( $data['child_order'] ) {
-			$child_id = intval( $data['child_order']['id'] );
+			$child_id = intval( $data['child_order']['ID'] );
 			wp_trash_post( $child_id );
 		}
 
