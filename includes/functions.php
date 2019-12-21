@@ -57,6 +57,29 @@ function bzalpha_get_field_key( $selector, $post_id = '' ) {
 }
 
 /**
+ * Get fields value.
+ */
+function bzalpha_get_fields( $post_id = '' ) {
+	if ( empty( $post_id ) ) {
+		$post_id = get_the_ID();
+	}
+
+	$fields = bzalpha_get_fields_map( $post_id );
+
+	if ( empty( $fields ) ) {
+		return [];
+	}
+
+	$values = [];
+
+	foreach( $fields as $name => $field_key ) {
+		$values[ $name ] = bzalpha_get_field( $field_key, $post_id );
+	}
+
+	return $values;
+}
+
+/**
  * Get field value.
  */
 function bzalpha_get_field( $selector, $post_id = '' ) {
