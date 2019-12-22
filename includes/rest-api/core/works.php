@@ -32,6 +32,9 @@ class Works {
 						'description' => __( 'Set to create position orders.' ),
 						'type'        => 'array',
 						'required'    => true,
+						'items'       => [
+							'type' => 'string',
+						],
 					],
 				]
 			]
@@ -107,7 +110,7 @@ class Works {
 			$data[] = get_post( $post_id );
 		}
 
-		return new $data;
+		return $data;
 	}
 
 	/**
