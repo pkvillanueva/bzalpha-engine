@@ -11,19 +11,19 @@ class Works {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
+		add_action( 'rest_api_init', [ $this, 'routes' ] );
 	}
 
 	/**
 	 * Register routes.
 	 */
-	public function register_routes() {
+	public function routes() {
 		register_rest_route( 'bzalpha/v1', '/bz-order/bulk', [
 			[
 				'methods'  => 'POST',
-				'callback' => [ $this, 'rest_bulk' ],
+				'callback' => [ $this, 'bulk_order' ],
 				'args'     => [
-					'vessel' => [
+					'vessel'    => [
 						'description' => __( 'Set the vessel for orders.' ),
 						'type'        => 'integer',
 						'required'    => true,
@@ -40,11 +40,16 @@ class Works {
 		register_rest_route( 'bzalpha/v1', '/bz-order/close', [
 			[
 				'methods'  => 'POST',
-				'callback' => [ $this, 'rest_close' ],
+				'callback' => [ $this, 'close_order' ],
 				'args'     => [
-					'id' => [
+					'id'              => [
 						'description' => __( 'Set order ID to close.' ),
 						'type'        => 'integer',
+						'required'    => true,
+					],
+					'end_of_contract' => [
+						'description' => __( 'Set end of contract remark.' ),
+						'type'        => 'string',
 						'required'    => true,
 					],
 				]
@@ -55,9 +60,9 @@ class Works {
 	/**
 	 * Create order.
 	 */
-	public function rest_bulk( $request ) {
+	public function bulk_order( $request ) {
 		if ( ! function_exists( 'acf' ) ) {
-			return new \WP_Error( 'invalid_route', 'Invalid route.', [ 'status' => 404 ] );
+			return $this->error( 'Invalid route.' );
 		}
 
 		$data = [];
@@ -102,48 +107,165 @@ class Works {
 			$data[] = get_post( $post_id );
 		}
 
-		return new \WP_REST_Response( $data, 200 );
+		return new $data;
 	}
 
 	/**
 	 * Switch order.
 	 */
-	public function rest_switch( $request ) {
+	public function close_order( $request ) {
 		if ( ! function_exists( 'acf' ) ) {
-			return new \WP_Error( 'invalid_route', 'Invalid route.', [ 'status' => 404 ] );
-		} elseif ( empty( $request['id'] ) ) {
-			return new \WP_Error( 'invalid_params', 'Invalid params.', [ 'status' => 404 ] );
-		} elseif ( get_post_status( $request['id'] ) !== 'publish' ) {
-			return new \WP_Error( 'invalid_request', 'Order not found.', [ 'status' => 404 ] );
+			return $this->error( 'Invalid route.' );
+		} elseif ( ! $this->post_exist( $request['id'] ) ) {
+			return $this->error( 'Order not found' );
 		}
 
-		$order_id = intval( $request['id'] );
+		$order_status = bzalpha_get_field( 'order_status', $request['id'] );
 
-		$child_order = bzalpha_update_field( 'child_order', $order_id );
-		if ( ! $child_order || get_post_status( $child_order ) !== 'publish' ) {
-			return new \WP_Error( 'invalid_request', 'Child order not found.', [ 'status' => 404 ] );
+		if ( $order_status !== 'onboard' ) {
+			return $this->error( 'Could not close this order.' );
 		}
 
-		$seaman = bzalpha_update_field( 'seaman', $order_id );
-		if ( ! $seaman || get_post_status( $seaman ) !== 'publish' ) {
-			return new \WP_Error( 'invalid_request', 'Seaman not found.', [ 'status' => 404 ] );
+		$seaman = bzalpha_get_field( 'seaman', $request['id'] );
+
+		if ( ! $this->post_exist( $seaman ) ) {
+			return $this->error( 'Seaman not found.' );
 		}
 
-		$vessel = bzalpha_update_field( 'seaman', $order_id );
-		if ( ! $vessel || get_post_status( $vessel ) !== 'publish' ) {
-			return new \WP_Error( 'invalid_request', 'Vessel not found.', [ 'status' => 404 ] );
+		$vessel = bzalpha_get_field( 'vessel', $request['id'] );
+
+		if ( ! $this->post_exist( $vessel ) ) {
+			return $this->error( 'Vessel not found' );
 		}
 
-		// Complete the order.
+		// Save current order as seaman experience.
+		$this->save_experience(
+			$seaman->ID,
+			$request['id'],
+			$vessel,
+			$request['end_of_contract']
+		);
+
 		bzalpha_update_field( 'order_status', 'completed', $request['id'] );
 
-		// Replace the current order by the child one.
-		bzalpha_update_field( 'order_status', 'onboard', $child_order );
+		// Try child order.
+		$this->maybe_switch_order( $request['id'] );
 
-		// Get child order fields.
-		$fields = get_fields( $child_order );
+		return [
+			'success' => true,
+		];
+	}
 
-		return $child_order;
+	/**
+	 * Save seaman experience.
+	 */
+	public function save_experience( $seaman_id, $order_id, $vessel, $end_of_contract ) {
+		$data = [
+			'end_of_contract' => $end_of_contract,
+		];
+
+		$order_map = [
+			'date_start' => 'sign_on',
+			'date_end'   => 'sign_off',
+			'rank'       => 'position',
+		];
+
+		$order = bzalpha_get_fields( $order_id );
+
+		// Get data base on map.
+		foreach ( $order_map as $key => $target ) {
+			if ( isset( $order[ $target ] ) ) {
+				$data[ $key ] = $order[ $target ];
+			}
+		}
+
+		$vessel = array_merge( (array) $vessel, bzalpha_get_fields( $vessel->ID ) );
+
+		$vessel_map = [
+			'vessel' => 'post_title',
+			'type'   => 'type',
+			'flag'   => 'flag',
+			'imo'    => 'imo',
+			'grt'    => 'grt',
+			'dwt'    => 'dwt',
+			'hp'     => 'hp',
+			'kw'     => 'kw',
+			'engine' => 'engine',
+		];
+
+		// Get data base on map.
+		foreach ( $vessel_map as $key => $target ) {
+			if ( isset( $vessel[ $target ] ) ) {
+				$data[ $key ] = $vessel[ $target ];
+			}
+		}
+
+		$principal = get_the_terms( $vessel['ID'], 'principal' );
+
+		if ( $principal && ! is_wp_error( $principal ) ) {
+			$principal     = array_shift( $principal );
+			$data['owner'] = $principal->name;
+		}
+
+		$experiences = bzalpha_get_field( 'experiences', $seaman_id );
+
+		if ( empty( $experiences ) ) {
+			$experiences = [ $data ];
+		} else {
+			array_unshift( $experiences, $data );
+		}
+
+		bzalpha_update_field( 'experiences', $experiences, $seaman_id );
+	}
+
+	/**
+	 * Switch order.
+	 */
+	public function maybe_switch_order( $order_id ) {
+		$child_order = bzalpha_get_field( 'child_order', $order_id );
+
+		// No child order.
+		if ( ! $this->post_exist( $child_order ) ) {
+			return;
+		}
+
+		$order_status = bzalpha_get_field( 'order_status', $child_order->ID );
+
+		// Order is not reserved status.
+		if ( $order_status !== 'reserved' ) {
+			return;
+		}
+
+		$parent_order = bzalpha_get_field( 'parent_order', $child_order->ID );
+
+		// Order not match.
+		if ( ! $parent_order || $order_id !== $parent_order->ID ) {
+			return;
+		}
+
+		bzalpha_update_field( 'order_status', 'onboard', $child_order->ID );
+	}
+
+	/**
+	 * Validate post existence.
+	 */
+	public function post_exist( $post ) {
+		if ( ! $post ) {
+			return false;
+		} elseif ( is_object( $post ) && isset( $post->ID ) ) {
+			$post = $post->ID;
+		} elseif ( is_array( $post ) && isset( $post['ID'] ) ) {
+			$post = $post['ID'];
+		}
+
+		return get_post_status( $post ) === 'publish';
+	}
+
+	/**
+	 * Rest error.
+	 */
+	public function error( $error ) {
+		return new \WP_Error( 'invalid_request', $error, [ 'status' => 404 ] );
 	}
 }
 
