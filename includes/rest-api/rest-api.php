@@ -73,6 +73,7 @@ function rest_fields() {
 
 						if ( $value instanceof \WP_Post ) {
 							return array_merge( bzalpha_get_fields( $value->ID ), [
+								'id' => $value->ID,
 								'ID' => $value->ID,
 								'post_title' => $value->post_title,
 							] );
