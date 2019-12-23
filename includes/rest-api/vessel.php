@@ -1,20 +1,18 @@
 <?php
 
-namespace BZAlpha\REST_API\Controllers;
+namespace BZAlpha\REST_API;
 
 /**
  * Vessel Controller.
  */
-class Vessel extends \WP_REST_Posts_Controller {
+class Vessel extends Posts_Base {
 
 	/**
 	 * Constructor.
 	 */
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
-		$this->namespace = 'bzalpha/v1';
 
-		// Register actions.
 		$this->register_rest_fields();
 	}
 
@@ -55,17 +53,17 @@ class Vessel extends \WP_REST_Posts_Controller {
 					[
 						'relation' => 'OR',
 						[
-							'key'     => 'order_status',
+							'key'     => 'status',
 							'compare' => '=',
 							'value'   => 'pending',
 						],
 						[
-							'key'     => 'order_status',
+							'key'     => 'status',
 							'compare' => '=',
 							'value'   => 'processing',
 						],
 						[
-							'key'     => 'order_status',
+							'key'     => 'status',
 							'compare' => '=',
 							'value'   => 'onboard',
 						],
@@ -87,15 +85,72 @@ class Vessel extends \WP_REST_Posts_Controller {
 
 				foreach ( $orders as $key => $order ) {
 					$orders[ $key ] = [
-						'id'           => $order->ID,
-						'position'     => bzalpha_get_field( 'position', $order->ID ),
-						'order_status' => bzalpha_get_field( 'order_status', $order->ID ),
-						'sign_off'     => bzalpha_get_field( 'sign_off', $order->ID ),
+						'id'       => $order->ID,
+						'position' => get_post_meta( $order->ID, 'position', true ),
+						'status'   => get_post_meta( $order->ID, 'status', true ),
+						'sign_off' => get_post_meta( $order->ID, 'sign_off', true ),
 					];
 				}
 
 				return $orders;
 			}
 		] );
+	}
+
+	/**
+	 * Get meta schema.
+	 */
+	public function get_meta_schema() {
+		$meta = [];
+
+		$meta['type'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
+		$meta['flag'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
+		$meta['imo'] = [
+			'single'       => true,
+			'type'         => 'integer',
+			'show_in_rest' => true,
+		];
+
+		$meta['grt'] = [
+			'single'       => true,
+			'type'         => 'integer',
+			'show_in_rest' => true,
+		];
+
+		$meta['dwt'] = [
+			'single'       => true,
+			'type'         => 'integer',
+			'show_in_rest' => true,
+		];
+
+		$meta['hp'] = [
+			'single'       => true,
+			'type'         => 'integer',
+			'show_in_rest' => true,
+		];
+
+		$meta['kw'] = [
+			'single'       => true,
+			'type'         => 'integer',
+			'show_in_rest' => true,
+		];
+
+		$meta['engine'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
+		return $meta;
 	}
 }

@@ -6,7 +6,7 @@
             {
                 "key": "field_5de13f3b20906",
                 "label": "Order Status",
-                "name": "order_status",
+                "name": "status",
                 "type": "select",
                 "instructions": "",
                 "required": 0,

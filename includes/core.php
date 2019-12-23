@@ -25,8 +25,6 @@ function plugins_loaded() {
  * Include files.
  */
 function includes() {
-    require_once BZALPHA_INC . 'functions.php';
-    require_once BZALPHA_INC . 'acf/acf.php';
     require_once BZALPHA_INC . 'overrides.php';
     require_once BZALPHA_INC . 'post-types.php';
     require_once BZALPHA_INC . 'rest-api/rest-api.php';
@@ -38,7 +36,6 @@ function includes() {
 function hooks() {
 	\BZAlpha\Overrides\setup();
 	\BZAlpha\Post_Types\setup();
-	\BZAlpha\ACF\setup();
 	\BZAlpha\REST_API\setup();
 }
 
@@ -47,11 +44,6 @@ function hooks() {
  */
 function check_plugins() {
     $plugins = [];
-
-    // ACF plugin.
-    if ( ! class_exists( 'ACF' ) ) {
-        $plugins['advanced-custom-fields'] = 'Advanced Custom Fields';
-    }
 
     // JWT Token.
     if ( ! class_exists( 'Jwt_Auth' ) ) {

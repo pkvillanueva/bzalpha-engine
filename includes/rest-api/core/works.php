@@ -50,11 +50,6 @@ class Works {
 						'type'        => 'integer',
 						'required'    => true,
 					],
-					'end_of_contract' => [
-						'description' => __( 'Set end of contract remark.' ),
-						'type'        => 'string',
-						'required'    => true,
-					],
 				]
 			]
 		] );
@@ -64,13 +59,10 @@ class Works {
 	 * Create order.
 	 */
 	public function bulk_order( $request ) {
-		if ( ! function_exists( 'acf' ) ) {
-			return $this->error( 'Invalid route.' );
-		}
-
 		$data = [];
 
 		$meta_fields = [
+			'vessel',
 			'wage',
 			'currency',
 			'port',
@@ -83,24 +75,26 @@ class Works {
 		];
 
 		foreach ( $request['positions'] as $position ) {
+			$meta_input = [
+				'status'   => 'pending',
+				'position' => $position,
+			];
+
+			foreach ( $meta_fields as $meta ) {
+				if ( isset( $request[ $meta ] ) ) {
+					$meta_input[ $meta ] = $request[ $meta ];
+				}
+			}
+
 			$post_id = wp_insert_post( [
 				'post_status' => 'publish',
 				'post_type'   => 'bz_order',
+				'meta_input'  => $meta_input,
 			] );
 
 			if ( ! $post_id || is_wp_error( $post_id ) ) {
 				continue;
 			}
-
-			foreach ( $meta_fields as $meta ) {
-				if ( isset( $request[ $meta ] ) ) {
-					bzalpha_update_field( $meta, $request[ $meta ], $post_id );
-				}
-			}
-
-			bzalpha_update_field( 'vessel', $request['vessel'], $post_id );
-			bzalpha_update_field( 'order_status', 'pending', $post_id );
-			bzalpha_update_field( 'position', $position, $post_id );
 
 			wp_update_post( [
 				'ID'         => $post_id,
@@ -117,39 +111,37 @@ class Works {
 	 * Switch order.
 	 */
 	public function close_order( $request ) {
-		if ( ! function_exists( 'acf' ) ) {
-			return $this->error( 'Invalid route.' );
-		} elseif ( ! $this->post_exist( $request['id'] ) ) {
+		if ( ! $this->post_exist( $request['id'] ) ) {
 			return $this->error( 'Order not found' );
 		}
 
-		$order_status = bzalpha_get_field( 'order_status', $request['id'] );
+		$status = get_post_meta( $request['id'], 'status', true );
 
-		if ( $order_status !== 'onboard' ) {
+		if ( $status !== 'onboard' ) {
 			return $this->error( 'Could not close this order.' );
 		}
 
-		$seaman = bzalpha_get_field( 'seaman', $request['id'] );
+		$seaman_id = intval( get_post_meta( $request['id'], 'seaman', true ) );
 
-		if ( ! $this->post_exist( $seaman ) ) {
+		if ( ! $this->post_exist( $seaman_id ) ) {
 			return $this->error( 'Seaman not found.' );
 		}
 
-		$vessel = bzalpha_get_field( 'vessel', $request['id'] );
+		$vessel_id = intval( get_post_meta( $request['id'], 'vessel', true ) );
 
-		if ( ! $this->post_exist( $vessel ) ) {
+		if ( ! $this->post_exist( $vessel_id ) ) {
 			return $this->error( 'Vessel not found' );
 		}
 
 		// Save current order as seaman experience.
 		$this->save_experience(
-			$seaman->ID,
+			$seaman_id,
 			$request['id'],
-			$vessel,
+			$vessel_id,
 			$request['end_of_contract']
 		);
 
-		bzalpha_update_field( 'order_status', 'completed', $request['id'] );
+		update_post_meta( $request['id'], 'status', 'completed' );
 
 		// Try child order.
 		$this->maybe_switch_order( $request['id'] );
@@ -162,7 +154,7 @@ class Works {
 	/**
 	 * Save seaman experience.
 	 */
-	public function save_experience( $seaman_id, $order_id, $vessel, $end_of_contract ) {
+	public function save_experience( $seaman_id, $order_id, $vessel_id, $end_of_contract ) {
 		$data = [
 			'end_of_contract' => $end_of_contract,
 		];
@@ -173,19 +165,14 @@ class Works {
 			'rank'       => 'position',
 		];
 
-		$order = bzalpha_get_fields( $order_id );
-
 		// Get data base on map.
-		foreach ( $order_map as $key => $target ) {
-			if ( isset( $order[ $target ] ) ) {
-				$data[ $key ] = $order[ $target ];
-			}
+		foreach ( $order_map as $key => $meta_key ) {
+			$data[ $key ] = get_post_meta( $order_id, $meta_key, true );
 		}
 
-		$vessel = array_merge( (array) $vessel, bzalpha_get_fields( $vessel->ID ) );
+		$data['vessel'] = get_the_title( $vessel_id );
 
 		$vessel_map = [
-			'vessel' => 'post_title',
 			'type'   => 'type',
 			'flag'   => 'flag',
 			'imo'    => 'imo',
@@ -197,20 +184,18 @@ class Works {
 		];
 
 		// Get data base on map.
-		foreach ( $vessel_map as $key => $target ) {
-			if ( isset( $vessel[ $target ] ) ) {
-				$data[ $key ] = $vessel[ $target ];
-			}
+		foreach ( $vessel_map as $key => $meta_key ) {
+			$data[ $key ] = get_post_meta( $vessel_id, $meta_key, true );
 		}
 
-		$principal = get_the_terms( $vessel['ID'], 'principal' );
+		$principal = get_the_terms( $vessel_id, 'principal' );
 
 		if ( $principal && ! is_wp_error( $principal ) ) {
 			$principal     = array_shift( $principal );
 			$data['owner'] = $principal->name;
 		}
 
-		$experiences = bzalpha_get_field( 'experiences', $seaman_id );
+		$experiences = get_post_meta( $seaman_id, 'experiences', true );
 
 		if ( empty( $experiences ) ) {
 			$experiences = [ $data ];
@@ -218,35 +203,35 @@ class Works {
 			array_unshift( $experiences, $data );
 		}
 
-		bzalpha_update_field( 'experiences', $experiences, $seaman_id );
+		update_post_meta( $seaman_id, 'experiences', $experiences );
 	}
 
 	/**
 	 * Switch order.
 	 */
 	public function maybe_switch_order( $order_id ) {
-		$child_order = bzalpha_get_field( 'child_order', $order_id );
+		$child_order_id = intval( get_post_meta( $order_id, 'child_order', true ) );
 
 		// No child order.
-		if ( ! $this->post_exist( $child_order ) ) {
+		if ( ! $this->post_exist( $child_order_id ) ) {
 			return;
 		}
 
-		$order_status = bzalpha_get_field( 'order_status', $child_order->ID );
+		$status = get_post_meta( $child_order_id, 'status', true );
 
 		// Order is not reserved status.
-		if ( $order_status !== 'reserved' ) {
+		if ( $status !== 'reserved' ) {
 			return;
 		}
 
-		$parent_order = bzalpha_get_field( 'parent_order', $child_order->ID );
+		$parent_order_id = intval( get_post_meta( $child_order_id, 'parent_order', true ) );
 
 		// Order not match.
-		if ( ! $parent_order || $order_id !== $parent_order->ID ) {
+		if ( ! $parent_order_id || $order_id !== $parent_order_id ) {
 			return;
 		}
 
-		bzalpha_update_field( 'order_status', 'onboard', $child_order->ID );
+		update_post_meta( $child_order_id, 'status', 'onboard' );
 	}
 
 	/**
