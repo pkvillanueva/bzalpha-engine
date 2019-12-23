@@ -8,7 +8,8 @@ namespace BZAlpha\Post_Types;
 function setup() {
     add_action( 'init', __NAMESPACE__ . '\register_seaman' );
     add_action( 'init', __NAMESPACE__ . '\register_vessel' );
-    add_action( 'init', __NAMESPACE__ . '\register_bz_order' );
+	add_action( 'init', __NAMESPACE__ . '\register_bz_order' );
+	add_action( 'init', __NAMESPACE__ . '\register_principal' );
 }
 
 /**
@@ -45,10 +46,10 @@ function register_seaman() {
 		'has_archive'           => true,
 		'hierarchical'          => false,
 		'menu_position'         => null,
-		'supports'              => [ 'title', 'author', 'thumbnail' ],
+		'supports'              => [ 'title', 'author', 'thumbnail', 'custom-fields' ],
 		'menu_icon'             => 'dashicons-businessperson',
 		'show_in_rest'          => true,
-		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\Seaman',
+		'rest_controller_class' => '\BZAlpha\REST_API\Seaman',
     ];
 
 	register_post_type( 'seaman', $args );
@@ -88,14 +89,19 @@ function register_vessel() {
 		'has_archive'           => true,
 		'hierarchical'          => false,
 		'menu_position'         => null,
-		'supports'              => [ 'title', 'author', 'thumbnail' ],
+		'supports'              => [ 'title', 'author', 'custom-fields' ],
 		'show_in_rest'          => true,
-		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\Vessel',
+		'rest_controller_class' => '\BZAlpha\REST_API\Vessel',
 	];
 
 	register_post_type( 'vessel', $args );
+}
 
-	$tax_labels = array(
+/**
+ * Principal taxonomy.
+ */
+function register_principal() {
+	$tax_labels = [
         'name'                       => _x( 'Principals', 'taxonomy general name', 'bzalpha' ),
         'singular_name'              => _x( 'Principal', 'taxonomy singular name', 'bzalpha' ),
         'search_items'               => __( 'Search Principals', 'bzalpha' ),
@@ -112,19 +118,19 @@ function register_vessel() {
         'choose_from_most_used'      => __( 'Choose from the most used principals', 'bzalpha' ),
         'not_found'                  => __( 'No principals found.', 'bzalpha' ),
         'menu_name'                  => __( 'Principals', 'bzalpha' ),
-    );
+	];
 
-    $tax_args = array(
+    $tax_args = [
         'hierarchical'          => false,
         'labels'                => $tax_labels,
         'show_ui'               => true,
         'show_admin_column'     => true,
         'update_count_callback' => '_update_post_term_count',
         'query_var'             => true,
-		'rewrite'               => array( 'slug' => 'principal' ),
+		'rewrite'               => [ 'slug' => 'principal' ],
 		'show_in_rest'          => true,
-		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\Principal',
-    );
+		'rest_controller_class' => '\BZAlpha\REST_API\Principal',
+	];
 
     register_taxonomy( 'principal', 'vessel', $tax_args );
 }
@@ -163,10 +169,10 @@ function register_bz_order() {
 		'has_archive'           => true,
 		'hierarchical'          => false,
 		'menu_position'         => null,
-		'supports'              => [ 'title', 'author', 'thumbnail' ],
+		'supports'              => [ 'title', 'author', 'custom-fields' ],
 		'show_in_rest'          => true,
 		'rest_base'             => 'bz-order',
-		'rest_controller_class' => '\BZAlpha\REST_API\Controllers\BZ_Order',
+		'rest_controller_class' => '\BZAlpha\REST_API\BZ_Order',
 	];
 
 	register_post_type( 'bz_order', $args );
