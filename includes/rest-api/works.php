@@ -256,5 +256,3 @@ class Works {
 		return new \WP_Error( 'invalid_request', $error, [ 'status' => 404 ] );
 	}
 }
-
-new Works();
