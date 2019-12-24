@@ -12,7 +12,6 @@ class Vessel extends Posts_Base {
 	 */
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
-
 		$this->register_rest_fields();
 	}
 

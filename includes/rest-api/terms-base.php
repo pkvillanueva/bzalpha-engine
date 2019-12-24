@@ -17,10 +17,8 @@ class Terms_Base extends \WP_REST_Terms_Controller {
 	 */
 	public function __construct( $taxonomy ) {
 		parent::__construct( $taxonomy );
-
 		$this->namespace   = 'bzalpha/v1';
-		$this->meta_schema = new Meta_Schema( $taxonomy );
-		$this->meta_schema->register_meta_schema( $this->get_meta_schema() );
+		$this->meta_schema = new Meta_Schema( $taxonomy, $this->get_meta_schema() );
 
 		add_filter( "rest_prepare_{$this->taxonomy}", [ $this, 'prepare_term' ] );
 	}

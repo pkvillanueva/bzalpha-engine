@@ -17,10 +17,8 @@ class Posts_Base extends \WP_REST_Posts_Controller {
 	 */
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
-
 		$this->namespace   = 'bzalpha/v1';
-		$this->meta_schema = new Meta_Schema( $post_type );
-		$this->meta_schema->register_meta_schema( $this->get_meta_schema() );
+		$this->meta_schema = new Meta_Schema( $post_type, $this->get_meta_schema() );
 
 		add_filter( "rest_prepare_{$this->post_type}", [ $this, 'prepare_post' ] );
 	}

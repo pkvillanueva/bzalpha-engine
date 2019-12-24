@@ -1,0 +1,42 @@
+<?php
+
+namespace BZAlpha\REST_API;
+
+/**
+ * Prepare callback rest object.
+ */
+function prepare_callback_rest_object( $object_id ) {
+	global $_bzalpha_no_rest_object;
+	$object_id = intval( $object_id );
+
+	if ( empty( $object_id ) || ! post_exists( $object_id ) ) {
+		return null;
+	} elseif ( $_bzalpha_no_rest_object ) {
+		return $object_id;
+	}
+
+	// Disable rest object.
+	$_bzalpha_no_rest_object = true;
+
+	$post_type = str_replace( '_', '-', get_post_type( $object_id ) );
+	$route     = "/bzalpha/v1/{$post_type}/{$object_id}";
+	$response  = rest_do_request( new \WP_REST_Request( 'GET', $route ) );
+	$status    = $response->status;
+	$data      = $response->data;
+
+	// Enable rest object.
+	$_bzalpha_no_rest_object = false;
+
+	if ( $status !== 200 ) {
+		return $object_id;
+	}
+
+	return $data;
+}
+
+/**
+ * Validate post.
+ */
+function post_exists( $id ) {
+	return is_string( get_post_status( $id ) );
+}
