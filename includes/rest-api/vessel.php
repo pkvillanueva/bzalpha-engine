@@ -84,10 +84,12 @@ class Vessel extends Posts_Base {
 
 				foreach ( $orders as $key => $order ) {
 					$orders[ $key ] = [
-						'id'       => $order->ID,
-						'position' => get_post_meta( $order->ID, 'position', true ),
-						'status'   => get_post_meta( $order->ID, 'status', true ),
-						'sign_off' => get_post_meta( $order->ID, 'sign_off', true ),
+						'id'   => $order->ID,
+						'meta' => [
+							'position' => get_post_meta( $order->ID, 'position', true ),
+							'status'   => get_post_meta( $order->ID, 'status', true ),
+							'sign_off' => get_post_meta( $order->ID, 'sign_off', true ),
+						]
 					];
 				}
 

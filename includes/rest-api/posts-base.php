@@ -51,6 +51,9 @@ class Posts_Base extends \WP_REST_Posts_Controller {
 			'author',
 			'template',
 			'status',
+			'permalink_template',
+			'generated_slug',
+			'password',
 		];
 
 		foreach ( $map_unset as $var ) {
