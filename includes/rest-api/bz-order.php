@@ -185,7 +185,7 @@ class BZ_Order extends Posts_Base {
 			'single'       => true,
 			'type'         => 'integer',
 			'show_in_rest' => [
-				'prepare_callback' => [ $this->meta_schema, 'prepare_rest_object' ],
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_rest_object',
 			],
 		];
 
@@ -193,7 +193,7 @@ class BZ_Order extends Posts_Base {
 			'single'       => true,
 			'type'         => 'integer',
 			'show_in_rest' => [
-				'prepare_callback' => [ $this->meta_schema, 'prepare_rest_object' ],
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_rest_object',
 			],
 		];
 
@@ -201,7 +201,7 @@ class BZ_Order extends Posts_Base {
 			'single'       => true,
 			'type'         => 'integer',
 			'show_in_rest' => [
-				'prepare_callback' => [ $this->meta_schema, 'prepare_rest_object' ],
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_rest_object',
 			],
 		];
 
@@ -209,7 +209,7 @@ class BZ_Order extends Posts_Base {
 			'single'       => true,
 			'type'         => 'integer',
 			'show_in_rest' => [
-				'prepare_callback' => [ $this->meta_schema, 'prepare_rest_object' ],
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_rest_object',
 			],
 		];
 

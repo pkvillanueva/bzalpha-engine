@@ -10,6 +10,7 @@ function setup() {
 
     // Include files.
     $rest_includes = BZALPHA_INC . 'rest-api/';
+    require_once $rest_includes . 'functions.php';
     require_once $rest_includes . 'meta-schema.php';
     require_once $rest_includes . 'posts-base.php';
     require_once $rest_includes . 'terms-base.php';

@@ -12,8 +12,8 @@ class Seaman extends Posts_Base {
 	 */
 	public function __construct( $post_type ) {
 		parent::__construct( $post_type );
-
 		$this->register_rest_fields();
+
 		add_filter( 'rest_seaman_query', [ $this, 'query' ], 10, 2 );
 	}
 
