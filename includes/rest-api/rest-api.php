@@ -18,7 +18,9 @@ function setup() {
     require_once $rest_includes . 'seaman.php';
     require_once $rest_includes . 'vessel.php';
     require_once $rest_includes . 'principal.php';
-    require_once $rest_includes . 'bz-order.php';
+	require_once $rest_includes . 'bz-order.php';
+
+	new Works();
 }
 
 /**
