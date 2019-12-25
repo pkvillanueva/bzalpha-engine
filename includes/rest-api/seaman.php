@@ -334,6 +334,8 @@ class Seaman extends Posts_Base {
 							'owner'           => [ 'type' => 'string' ],
 							'engine'          => [ 'type' => 'string' ],
 							'end_of_contract' => [ 'type' => 'string' ],
+							'currency'        => [ 'type' => 'string' ],
+							'wage'            => [ 'type' => 'integer' ],
 							'grt'             => [ 'type' => 'integer' ],
 							'dwt'             => [ 'type' => 'integer' ],
 							'imo'             => [ 'type' => 'integer' ],

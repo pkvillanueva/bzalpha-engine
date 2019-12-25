@@ -163,6 +163,8 @@ class Works {
 			'date_start' => 'sign_on',
 			'date_end'   => 'sign_off',
 			'rank'       => 'position',
+			'wage'       => 'wage',
+			'currency'   => 'currency',
 		];
 
 		// Get data base on map.
