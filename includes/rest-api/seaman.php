@@ -15,6 +15,7 @@ class Seaman extends Posts_Base {
 		$this->register_rest_fields();
 
 		add_filter( 'rest_seaman_query', [ $this, 'query' ], 10, 2 );
+		add_filter( 'rest_after_insert_seaman', [ $this, 'insert' ], 10, 2 );
 	}
 
 	/**
@@ -45,6 +46,18 @@ class Seaman extends Posts_Base {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Filter after insert.
+	 */
+	public function insert( $post, $request ) {
+		if ( isset( $request['meta']['first_name'] ) && isset( $request['meta']['last_name'] ) ) {
+			wp_update_post( [
+				'ID'         => $post->ID,
+				'post_title' => "{$request['meta']['first_name']} {$request['meta']['last_name']}",
+			] );
+		}
 	}
 
 	/**
@@ -131,7 +144,7 @@ class Seaman extends Posts_Base {
 			'show_in_rest' => true,
 		];
 
-		$meta['telephone'] = [
+		$meta['tel'] = [
 			'single'       => true,
 			'type'         => 'string',
 			'show_in_rest' => true,
