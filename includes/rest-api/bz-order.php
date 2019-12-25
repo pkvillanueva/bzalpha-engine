@@ -47,6 +47,11 @@ class BZ_Order extends Posts_Base {
 						'compare' => '=',
 						'value'   => 'onboard',
 					],
+					[
+						'key'     => 'status',
+						'compare' => '=',
+						'value'   => 'reserved',
+					],
 				]
 			];
 		}
@@ -58,8 +63,8 @@ class BZ_Order extends Posts_Base {
 	 * Filter after insert.
 	 */
 	public function insert( $post, $request ) {
-		if ( isset( $request['position'] ) ) {
-			$position = $request['position'];
+		if ( isset( $request['meta']['position'] ) ) {
+			$position = $request['meta']['position'];
 
 			wp_update_post( [
 				'ID'         => $post->ID,
@@ -67,12 +72,10 @@ class BZ_Order extends Posts_Base {
 			] );
 		}
 
-		if ( isset( $request['parent_order' ] ) ) {
-			$parent_order = intval( $request['parent_order' ] );
-
-			update_post_meta( $parent_order, 'child_order', $post->ID );
-			update_post_meta( $parent_order, 'candidates', [] );
-			update_post_meta( $post->ID, 'parent_order', $parent_order );
+		if ( isset( $request['meta']['parent_order'] ) ) {
+			update_post_meta( $request['meta']['parent_order'], 'child_order', $post->ID );
+			update_post_meta( $request['meta']['parent_order'], 'candidates', [] );
+			update_post_meta( $post->ID, 'parent_order', $request['meta']['parent_order'] );
 		}
 	}
 
@@ -80,20 +83,10 @@ class BZ_Order extends Posts_Base {
 	 * Filter delete.
 	 */
 	public function delete( $post, $response ) {
-		if ( ! isset( $response->data ) ) {
-			return;
-		}
-
-		$data = $response->data;
-
-		if ( $data['child_order'] ) {
-			$child_id = intval( $data['child_order']['ID'] );
-			wp_trash_post( $child_id );
-		}
-
-		if ( $data['parent_order'] ) {
-			$parent_id = intval( $data['parent_order'] );
-			update_post_meta( $parent_id, 'child_order', null );
+		if ( $response['meta']['child_order'] ) {
+			if ( 'reserved' === get_post_meta( $response['meta']['child_order'], 'status', true ) ) {
+				wp_trash_post( $response['meta']['child_order'] );
+			}
 		}
 	}
 
@@ -200,27 +193,26 @@ class BZ_Order extends Posts_Base {
 		$meta['child_order'] = [
 			'single'       => true,
 			'type'         => 'integer',
-			'show_in_rest' => [
-				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_rest_object',
-			],
+			'show_in_rest' => true,
 		];
 
 		$meta['parent_order'] = [
 			'single'       => true,
 			'type'         => 'integer',
-			'show_in_rest' => [
-				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_rest_object',
-			],
+			'show_in_rest' => true,
 		];
 
 		$meta['candidates'] = [
-			// 'get_callback' => [ $this, 'prepare_rest_array' ],
 			'single'       => true,
 			'type'         => 'array',
 			'show_in_rest' => [
-				'schema' => [
-					'type'  => 'array',
-					'items' => [
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_array_items',
+				'schema'           => [
+					'prepare_items' => [
+						'rest_object' => [ 'seaman' ],
+					],
+					'type'          => 'array',
+					'items'         => [
 						'type'       => 'object',
 						'properties' => [
 							'timestamp' => [ 'type' => 'string' ],

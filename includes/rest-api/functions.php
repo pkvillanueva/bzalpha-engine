@@ -35,6 +35,27 @@ function prepare_callback_rest_object( $object_id ) {
 }
 
 /**
+ * Prepare callback array items.
+ */
+function prepare_callback_array_items( $values, $request, $args ) {
+	if ( ! isset( $args['schema']['prepare_items'] ) ) {
+		return $values;
+	}
+
+	if ( isset( $args['schema']['prepare_items']['rest_object'] ) ) {
+		foreach ( $args['schema']['prepare_items']['rest_object'] as $key ) {
+			foreach ( $values as $index => $value ) {
+				if ( isset( $value[ $key ] ) ) {
+					$values[ $index ][ $key ] = prepare_callback_rest_object( $value[ $key ] );
+				}
+			}
+		}
+	}
+
+	return $values;
+}
+
+/**
  * Validate post.
  */
 function post_exists( $id ) {
