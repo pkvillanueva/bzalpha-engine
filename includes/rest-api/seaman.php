@@ -251,9 +251,13 @@ class Seaman extends Posts_Base {
 			'single'       => true,
 			'type'         => 'array',
 			'show_in_rest' => [
-				'schema' => [
-					'type'  => 'array',
-					'items' => [
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_array_items',
+				'schema'           => [
+					'prepare_items' => [
+						'rest_object' => [ 'file' ],
+					],
+					'type'          => 'array',
+					'items'         => [
 						'type'       => 'object',
 						'properties' => [
 							'type'       => [ 'type' => 'string' ],
@@ -272,9 +276,13 @@ class Seaman extends Posts_Base {
 			'single'       => true,
 			'type'         => 'array',
 			'show_in_rest' => [
-				'schema' => [
-					'type'  => 'array',
-					'items' => [
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_array_items',
+				'schema'           => [
+					'prepare_items' => [
+						'rest_object' => [ 'file' ],
+					],
+					'type'          => 'array',
+					'items'         => [
 						'type'       => 'object',
 						'properties' => [
 							'type'       => [ 'type' => 'string' ],
@@ -312,9 +320,13 @@ class Seaman extends Posts_Base {
 			'single'       => true,
 			'type'         => 'array',
 			'show_in_rest' => [
-				'schema' => [
-					'type'  => 'array',
-					'items' => [
+				'prepare_callback' => __NAMESPACE__ . '\prepare_callback_array_items',
+				'schema'           => [
+					'prepare_items' => [
+						'rest_object' => [ 'file' ],
+					],
+					'type'          => 'array',
+					'items'         => [
 						'type'       => 'object',
 						'properties' => [
 							'name'        => [ 'type' => 'string' ],

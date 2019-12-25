@@ -19,7 +19,13 @@ function prepare_callback_rest_object( $object_id ) {
 	$_bzalpha_no_rest_object = true;
 
 	$post_type = str_replace( '_', '-', get_post_type( $object_id ) );
-	$route     = "/bzalpha/v1/{$post_type}/{$object_id}";
+
+	if ( $post_type === 'attachment' ) {
+		$route = "/wp/v2/media/{$object_id}";
+	} else {
+		$route = "/bzalpha/v1/{$post_type}/{$object_id}";
+	}
+
 	$response  = rest_do_request( new \WP_REST_Request( 'GET', $route ) );
 	$status    = $response->status;
 	$data      = $response->data;
@@ -38,6 +44,10 @@ function prepare_callback_rest_object( $object_id ) {
  * Prepare callback array items.
  */
 function prepare_callback_array_items( $values, $request, $args ) {
+	if ( ! is_array( $values ) ) {
+		return $values;
+	}
+
 	if ( ! isset( $args['schema']['prepare_items'] ) ) {
 		return $values;
 	}
