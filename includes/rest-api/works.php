@@ -111,7 +111,7 @@ class Works {
 	 * Switch order.
 	 */
 	public function close_order( $request ) {
-		if ( ! $this->post_exist( $request['id'] ) ) {
+		if ( ! post_exists( $request['id'] ) ) {
 			return $this->error( 'Order not found' );
 		}
 
@@ -123,13 +123,13 @@ class Works {
 
 		$seaman_id = intval( get_post_meta( $request['id'], 'seaman', true ) );
 
-		if ( ! $this->post_exist( $seaman_id ) ) {
+		if ( ! post_exists( $seaman_id ) ) {
 			return $this->error( 'Seaman not found.' );
 		}
 
 		$vessel_id = intval( get_post_meta( $request['id'], 'vessel', true ) );
 
-		if ( ! $this->post_exist( $vessel_id ) ) {
+		if ( ! post_exists( $vessel_id ) ) {
 			return $this->error( 'Vessel not found' );
 		}
 
@@ -197,7 +197,7 @@ class Works {
 
 		$experiences = get_post_meta( $seaman_id, 'experiences', true );
 
-		if ( empty( $experiences ) ) {
+		if ( empty( $experiences ) || ! is_array( $experiences ) ) {
 			$experiences = [ $data ];
 		} else {
 			array_unshift( $experiences, $data );
@@ -213,7 +213,7 @@ class Works {
 		$child_order_id = intval( get_post_meta( $order_id, 'child_order', true ) );
 
 		// No child order.
-		if ( ! $this->post_exist( $child_order_id ) ) {
+		if ( ! post_exists( $child_order_id ) ) {
 			return;
 		}
 
@@ -232,21 +232,6 @@ class Works {
 		}
 
 		update_post_meta( $child_order_id, 'status', 'onboard' );
-	}
-
-	/**
-	 * Validate post existence.
-	 */
-	public function post_exist( $post ) {
-		if ( ! $post ) {
-			return false;
-		} elseif ( is_object( $post ) && isset( $post->ID ) ) {
-			$post = $post->ID;
-		} elseif ( is_array( $post ) && isset( $post['ID'] ) ) {
-			$post = $post['ID'];
-		}
-
-		return get_post_status( $post ) === 'publish';
 	}
 
 	/**
