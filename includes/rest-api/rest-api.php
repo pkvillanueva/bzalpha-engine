@@ -14,6 +14,7 @@ function setup() {
     require_once $rest_includes . 'meta-schema.php';
     require_once $rest_includes . 'posts-base.php';
     require_once $rest_includes . 'terms-base.php';
+    require_once $rest_includes . 'media.php';
     require_once $rest_includes . 'works.php';
     require_once $rest_includes . 'seaman.php';
     require_once $rest_includes . 'vessel.php';
@@ -21,6 +22,7 @@ function setup() {
 	require_once $rest_includes . 'bz-order.php';
 
 	new Works();
+	new Media();
 }
 
 /**
