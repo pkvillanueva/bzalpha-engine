@@ -59,5 +59,5 @@ function prepare_callback_array_items( $values, $request, $args ) {
  * Validate post.
  */
 function post_exists( $id ) {
-	return is_string( get_post_status( $id ) );
+	return get_post_status( $id ) === 'publish';
 }
