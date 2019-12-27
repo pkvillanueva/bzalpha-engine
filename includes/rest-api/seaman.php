@@ -24,8 +24,14 @@ class Seaman extends Posts_Base {
 	public function register_rest_fields() {
 		register_rest_field( 'seaman', 'avatar', [
 			'schema'       => null,
-			'get_callback' => function() {
-				return wp_get_attachment_image_url( get_post_thumbnail_id(), 'medium' );
+			'get_callback' => function( $post ) {
+				$avatar = get_the_post_thumbnail_url( $post['id'], 'medium' );
+
+				if ( ! $avatar ) {
+					return '';
+				}
+
+				return $avatar;
 			}
 		] );
 
