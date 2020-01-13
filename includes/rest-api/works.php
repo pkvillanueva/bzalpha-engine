@@ -156,6 +156,7 @@ class Works {
 	 */
 	public function save_experience( $seaman_id, $order_id, $vessel_id, $end_of_contract ) {
 		$data = [
+			'crewing_agency'  => 'BZ Alpha Navigation',
 			'end_of_contract' => $end_of_contract,
 		];
 
@@ -175,14 +176,15 @@ class Works {
 		$data['vessel'] = get_the_title( $vessel_id );
 
 		$vessel_map = [
-			'type'   => 'type',
-			'flag'   => 'flag',
-			'imo'    => 'imo',
-			'grt'    => 'grt',
-			'dwt'    => 'dwt',
-			'hp'     => 'hp',
-			'kw'     => 'kw',
-			'engine' => 'engine',
+			'type'       => 'type',
+			'flag'       => 'flag',
+			'year_built' => 'year_built',
+			'imo'        => 'imo',
+			'grt'        => 'grt',
+			'dwt'        => 'dwt',
+			'hp'         => 'hp',
+			'kw'         => 'kw',
+			'engine'     => 'engine',
 		];
 
 		// Get data base on map.
