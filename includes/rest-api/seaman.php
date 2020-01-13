@@ -58,10 +58,10 @@ class Seaman extends Posts_Base {
 	 * Filter after insert.
 	 */
 	public function insert( $post, $request ) {
-		if ( isset( $request['meta']['first_name'] ) && isset( $request['meta']['last_name'] ) ) {
+		if ( isset( $request['meta']['first_name'] ) && isset( $request['meta']['last_name'] ) && isset( $request['meta']['middle_name'] ) ) {
 			wp_update_post( [
 				'ID'         => $post->ID,
-				'post_title' => "{$request['meta']['first_name']} {$request['meta']['last_name']}",
+				'post_title' => "{$request['meta']['last_name']} {$request['meta']['first_name']} {$request['meta']['middle_name']}",
 			] );
 		}
 	}
