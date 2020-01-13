@@ -116,6 +116,12 @@ class Vessel extends Posts_Base {
 			'show_in_rest' => true,
 		];
 
+		$meta['year_built'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
 		$meta['imo'] = [
 			'single'       => true,
 			'type'         => 'integer',
