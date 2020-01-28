@@ -286,6 +286,12 @@ class Seaman extends Posts_Base {
 			'show_in_rest' => true,
 		];
 
+		$meta['overall_size'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
 		$meta['educations'] = [
 			'single'       => true,
 			'type'         => 'array',
