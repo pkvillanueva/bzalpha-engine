@@ -214,6 +214,18 @@ class Seaman extends Posts_Base {
 			'show_in_rest' => true,
 		];
 
+		$meta['phone_2'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
+		$meta['phone_3'] = [
+			'single'       => true,
+			'type'         => 'string',
+			'show_in_rest' => true,
+		];
+
 		$meta['skype'] = [
 			'single'       => true,
 			'type'         => 'string',
