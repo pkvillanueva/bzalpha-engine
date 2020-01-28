@@ -40,6 +40,58 @@ class Seaman extends Posts_Base {
 				return set_post_thumbnail( $post->ID, $value );
 			}
 		] );
+
+		register_rest_field( 'seaman', 'order', [
+			'schema'       => null,
+			'get_callback' => function( $post ) {
+				$meta_query = [
+					'relation' => 'AND',
+					[
+						'key'     => 'seaman',
+						'compare' => '=',
+						'value'   => $post['id'],
+					],
+					[
+						'relation' => 'OR',
+						[
+							'key'     => 'status',
+							'compare' => '=',
+							'value'   => 'processing',
+						],
+						[
+							'key'     => 'status',
+							'compare' => '=',
+							'value'   => 'onboard',
+						],
+					]
+				];
+
+				$orders = get_posts( [
+					'posts_per_page'   => 1,
+					'post_type'        => 'bz_order',
+					'meta_query'       => $meta_query,
+					'orderby'          => 'ID',
+					'order'            => 'ASC',
+					'suppress_filters' => true,
+				] );
+
+				if ( empty( $orders ) ) {
+					return [];
+				}
+
+				foreach ( $orders as $key => $order ) {
+					$orders[ $key ] = [
+						'id'   => $order->ID,
+						'meta' => [
+							'vessel' => get_post_meta( $order->ID, 'vessel', true ),
+							'status' => get_post_meta( $order->ID, 'status', true ),
+						]
+					];
+				}
+
+				return array_shift( $orders );
+			}
+		] );
 	}
 
 	/**
