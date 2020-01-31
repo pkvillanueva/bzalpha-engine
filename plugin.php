@@ -18,6 +18,7 @@ define( 'BZALPHA_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BZALPHA_INC', BZALPHA_PATH . 'includes/' );
 
 // Include files.
+require_once BZALPHA_PATH . 'vendor/autoload.php';
 require_once BZALPHA_INC . 'core.php';
 
 // Setup plugin.
