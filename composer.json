@@ -1,0 +1,6 @@
+{
+    "name": "patrick/bzalpha-engine",
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.10"
+    }
+}
