@@ -65,6 +65,8 @@ class Seaman {
 	 * @return void
 	 */
 	public function settings() {
+		$this->spreadsheet->getDefaultStyle()->getFont()->setName( 'Calibri' );
+		$this->spreadsheet->getDefaultStyle()->getFont()->setSize( 10 );
 		$this->sheet->getDefaultColumnDimension()->setWidth( 4 );
 		$this->sheet->getDefaultRowDimension()->setRowHeight( 18 );
 		$this->sheet->getPageSetup()->setFitToWidth( 1 );
@@ -88,36 +90,97 @@ class Seaman {
 			],
 		];
 
-		$cells = [
-			[ 'F1:U3',   'By signing this application form you agree that BZ ALPHA NAVIGATION INC. may collect, use and disclose your personal data as provided in this application form in accordance with the Personal Data Protection Act 2012 of the Philippines.' ],
-			[ 'F4:I4',   [ 'Position',       [ 'J4:M4', $this->get_meta( 'rank' ) ] ],                $styles['label'] ],
-			[ 'N4:Q4',   [ 'Date Available', [ 'R4:U4', $this->get_date_meta( 'date_available' ) ] ], $styles['label'] ],
-			[ 'F5:I5',   [ 'Surname',        [ 'J5:U5', $this->get_meta( 'last_name' ) ] ],           $styles['label'] ],
-			[ 'F6:I6',   [ 'Name',           [ 'J6:U6', $this->get_meta( 'first_name' ) ] ],          $styles['label'] ],
-			[ 'F7:I7',   [ 'Date of Birth',  [ 'J7:M7', $this->get_date_meta( 'birth_date' ) ] ],     $styles['label'] ],
-			[ 'N7:Q7',   [ 'Father Name',    [ 'R7:U7' ] ],                                           $styles['label'] ],
-			[ 'F8:I8',   [ 'Place of Birth', [ 'J8:M8', $this->get_meta( 'birth_place' ) ] ],         $styles['label'] ],
-			[ 'N8:Q8',   [ 'Mother Name',    [ 'R8:U8' ] ],                                           $styles['label'] ],
-			[ 'F9:I9',   [ 'Nationality',    [ 'J9:M9', $this->get_meta( 'nationality' ) ] ],         $styles['label'] ],
-			[ 'N9:Q9',   [ 'Marital Status', [ 'R9:U9', $this->get_meta( 'marital_status' ) ] ],      $styles['label'] ],
-			[ 'A11:D11', [ 'Phone',          [ 'E11:L11', $this->get_meta( 'phone' ) ] ],             $styles['label'] ],
-			[ 'A12:D12', [ 'Email',          [ 'E12:L12', $this->get_meta( 'email' ) ] ],             $styles['label'] ],
-			[ 'A13:D13', [ 'Skype',          [ 'E13:L13', $this->get_meta( 'skype' ) ] ],             $styles['label'] ],
-			[ 'M11:P13', [ 'Living Address', '' ],                                                    $styles['label'] ],
-			[ 'A14:D14', [ 'Next Kin',       [ 'E14:L14', '' ] ],                                     $styles['label'] ],
-			[ 'A15:D15', [ 'Relation',       [ 'E15:L15', '' ] ],                                     $styles['label'] ],
-			[ 'A16:D16', [ 'Phone (Kin)',    [ 'E16:L16', '' ] ],                                     $styles['label'] ],
-			[ 'M14:P16', [ 'Registration Address', '' ],                                              $styles['label'] ],
-			[ 'A18:M18', [ 'Last 7 years Sea Service Data (Fill in block letters)', '' ],             $styles['label'] ],
-			[ 'A19:M19', [ 'Vessel\'s name / Year / Flag / Shipowner\'s name / Country', '' ],        $styles['label'] ],
-			[ 'N18:O19', [ 'Rank', '' ],                                                              $styles['label'] ],
-			[ 'P18:R18', [ 'From', '' ],                                                              $styles['label'] ],
-			[ 'P19:R19', [ 'Till', '' ],                                                              $styles['label'] ],
-		];
+		$this->cell( 'F1:U3', 'By signing this application form you agree that BZ ALPHA NAVIGATION INC. may collect, use and disclose your personal data as provided in this application form in accordance with the Personal Data Protection Act 2012 of the Philippines.' );
 
-		foreach ( $cells as $cell ) {
-			call_user_func_array( [ $this, 'cell' ], $cell );
-		}
+		$this->cell( 'F4:I4', 'Position', $styles['label'] );
+
+		$this->cell( 'J4:M4', $this->get_meta( 'rank' ) );
+
+		$this->cell( 'N4:Q4', 'Date Available', $styles['label'] );
+
+		$this->cell( 'R4:U4', $this->get_date_meta( 'date_available' ) );
+
+		$this->cell( 'F5:I5', 'Surname', $styles['label'] );
+
+		$this->cell( 'J5:U5', $this->get_meta( 'last_name' ) );
+
+		$this->cell( 'F6:I6', 'Name', $styles['label'] );
+
+		$this->cell( 'J6:U6', $this->get_meta( 'first_name' ) );
+
+		$this->cell( 'F7:I7', 'Date of Birth', $styles['label'] );
+
+		$this->cell( 'J7:M7', $this->get_date_meta( 'birth_date' ) );
+
+		// TODO
+		$this->cell( 'N7:Q7', 'Father Name', $styles['label'] );
+
+		$this->cell( 'R7:U7', '' );
+
+		$this->cell( 'F8:I8', 'Place of Birth', $styles['label'] );
+
+		$this->cell( 'J8:M8', $this->get_meta( 'birth_place' ) );
+
+		// TODO
+		$this->cell( 'N8:Q8', 'Mother Name', $styles['label'] );
+
+		$this->cell( 'R8:U8', '' );
+
+		$this->cell( 'F9:I9', 'Nationality', $styles['label'] );
+
+		$this->cell( 'J9:M9', $this->get_meta( 'nationality' ) );
+
+		$this->cell( 'N9:Q9', 'Marital Status', $styles['label'] );
+
+		$this->cell( 'R9:U9', $this->get_meta( 'marital_status' ) );
+
+		$this->cell( 'A11:D11', 'Phone', $styles['label'] );
+
+		$this->cell( 'E11:L11', $this->get_meta( 'phone' ) );
+
+		$this->cell( 'A12:D12', 'Email', $styles['label'] );
+
+		$this->cell( 'E12:L12', $this->get_meta( 'email' ) );
+
+		$this->cell( 'A13:D13', 'Skype', $styles['label'] );
+
+		$this->cell( 'E13:L13', $this->get_meta( 'skype' ) );
+
+		// TODO
+		$this->cell( 'M11:P13', 'Living Address', $styles['label'] );
+
+		// TODO
+		$this->cell( 'A14:D14', 'Next Kin', $styles['label'] );
+
+		$this->cell( 'E14:L14', '' );
+
+		// TODO
+		$this->cell( 'A15:D15', 'Relation', $styles['label'] );
+
+		$this->cell( 'E15:L15', '' );
+
+		// TODO
+		$this->cell( 'A16:D16', 'Phone (Kin)', $styles['label'] );
+
+		$this->cell( 'E16:L16', '' );
+
+		// TODO
+		$this->cell( 'M14:P16', 'Registration Address', $styles['label'] );
+
+		// TODO
+		$this->cell( 'A18:M18', 'Last 7 years Sea Service Data (Fill in block letters)', $styles['label'] );
+
+		// TODO
+		$this->cell( 'A19:M19', 'Vessel\'s name / Year / Flag / Shipowner\'s name / Country', $styles['label'] );
+
+		// TODO
+		$this->cell( 'N18:O19', 'Rank', $styles['label'] );
+
+		// TODO
+		$this->cell( 'P18:R18', 'From', $styles['label'] );
+
+		// TODO
+		$this->cell( 'P19:R19', 'Till', $styles['label'] );
 	}
 
 	/**
@@ -125,11 +188,6 @@ class Seaman {
 	 */
 	public function cell( $range, $value = null, $styles = [] ) {
 		$cells = explode( ':', $range );
-
-		if ( is_array( $value ) && isset( $value[1] ) ) {
-			call_user_func_array( [ $this, 'cell' ], $value[1] );
-			$value = $value[0];
-		}
 
 		$this->sheet->mergeCells( $range );
 		$this->sheet->setCellValue( $cells[0], $value );
