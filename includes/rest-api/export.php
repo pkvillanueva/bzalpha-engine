@@ -43,7 +43,7 @@ class Export {
 		$this->include_filesystem();
 
 		$upload_dir = $this->get_upload_dir() . '/seaman';
-		$filename   = "{$upload_dir}/post-{$request['id']}.xlsx";
+		$filename   = "{$upload_dir}/{$request['id']}.xlsx";
 		// if ( $wp_filesystem->exists( $filename ) ) {
 		// 	return [ 'hey' ];
 		// }
