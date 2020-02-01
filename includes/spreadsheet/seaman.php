@@ -79,7 +79,21 @@ class Seaman {
 	public function template() {
 		$styles['label'] = [
 			'alignment' => [
+				'vertical' => Style\Alignment::VERTICAL_CENTER,
+				'wrapText' => true,
+			],
+			'fill' => [
+				'fillType'   => Style\Fill::FILL_SOLID,
+				'startColor' => [
+					'argb' => 'FF99CCFF',
+				],
+			],
+		];
+
+		$styles['label_centered'] = [
+			'alignment' => [
 				'vertical'   => Style\Alignment::VERTICAL_CENTER,
+				'horizontal' => Style\Alignment::HORIZONTAL_CENTER,
 				'wrapText'   => true,
 			],
 			'fill' => [
@@ -90,49 +104,49 @@ class Seaman {
 			],
 		];
 
-		$this->cell( 'F1:U3', 'By signing this application form you agree that BZ ALPHA NAVIGATION INC. may collect, use and disclose your personal data as provided in this application form in accordance with the Personal Data Protection Act 2012 of the Philippines.' );
+		$this->cell( 'F1:Y3', 'By signing this application form you agree that BZ ALPHA NAVIGATION INC. may collect, use and disclose your personal data as provided in this application form in accordance with the Personal Data Protection Act 2012 of the Philippines.' );
 
 		$this->cell( 'F4:I4', 'Position', $styles['label'] );
 
-		$this->cell( 'J4:M4', $this->get_meta( 'rank' ) );
+		$this->cell( 'J4:O4', $this->get_meta( 'rank' ) );
 
-		$this->cell( 'N4:Q4', 'Date Available', $styles['label'] );
+		$this->cell( 'P4:S4', 'Date Available', $styles['label'] );
 
-		$this->cell( 'R4:U4', $this->get_date_meta( 'date_available' ) );
+		$this->cell( 'T4:Y4', $this->get_date_meta( 'date_available' ) );
 
 		$this->cell( 'F5:I5', 'Surname', $styles['label'] );
 
-		$this->cell( 'J5:U5', $this->get_meta( 'last_name' ) );
+		$this->cell( 'J5:Y5', $this->get_meta( 'last_name' ) );
 
 		$this->cell( 'F6:I6', 'Name', $styles['label'] );
 
-		$this->cell( 'J6:U6', $this->get_meta( 'first_name' ) );
+		$this->cell( 'J6:Y6', $this->get_meta( 'first_name' ) );
 
 		$this->cell( 'F7:I7', 'Date of Birth', $styles['label'] );
 
-		$this->cell( 'J7:M7', $this->get_date_meta( 'birth_date' ) );
+		$this->cell( 'J7:O7', $this->get_date_meta( 'birth_date' ) );
 
 		// TODO
-		$this->cell( 'N7:Q7', 'Father Name', $styles['label'] );
+		$this->cell( 'P7:S7', 'Father Name', $styles['label'] );
 
-		$this->cell( 'R7:U7', '' );
+		$this->cell( 'T7:Y7', '' );
 
 		$this->cell( 'F8:I8', 'Place of Birth', $styles['label'] );
 
-		$this->cell( 'J8:M8', $this->get_meta( 'birth_place' ) );
+		$this->cell( 'J8:O8', $this->get_meta( 'birth_place' ) );
 
 		// TODO
-		$this->cell( 'N8:Q8', 'Mother Name', $styles['label'] );
+		$this->cell( 'P8:S8', 'Mother Name', $styles['label'] );
 
-		$this->cell( 'R8:U8', '' );
+		$this->cell( 'T8:Y8', '' );
 
 		$this->cell( 'F9:I9', 'Nationality', $styles['label'] );
 
-		$this->cell( 'J9:M9', $this->get_meta( 'nationality' ) );
+		$this->cell( 'J9:O9', $this->get_meta( 'nationality' ) );
 
-		$this->cell( 'N9:Q9', 'Marital Status', $styles['label'] );
+		$this->cell( 'P9:S9', 'Marital Status', $styles['label'] );
 
-		$this->cell( 'R9:U9', $this->get_meta( 'marital_status' ) );
+		$this->cell( 'T9:Y9', $this->get_meta( 'marital_status' ) );
 
 		$this->cell( 'A11:D11', 'Phone', $styles['label'] );
 
@@ -147,7 +161,7 @@ class Seaman {
 		$this->cell( 'E13:L13', $this->get_meta( 'skype' ) );
 
 		// TODO
-		$this->cell( 'M11:P13', 'Living Address', $styles['label'] );
+		$this->cell( 'M11:P13', 'Living Address', $styles['label_centered'] );
 
 		// TODO
 		$this->cell( 'A14:D14', 'Next Kin', $styles['label'] );
@@ -165,22 +179,21 @@ class Seaman {
 		$this->cell( 'E16:L16', '' );
 
 		// TODO
-		$this->cell( 'M14:P16', 'Registration Address', $styles['label'] );
+		$this->cell( 'M14:P16', 'Registration Address', $styles['label_centered'] );
 
-		// TODO
-		$this->cell( 'A18:M18', 'Last 7 years Sea Service Data (Fill in block letters)', $styles['label'] );
-
-		// TODO
-		$this->cell( 'A19:M19', 'Vessel\'s name / Year / Flag / Shipowner\'s name / Country', $styles['label'] );
-
-		// TODO
-		$this->cell( 'N18:O19', 'Rank', $styles['label'] );
-
-		// TODO
-		$this->cell( 'P18:R18', 'From', $styles['label'] );
-
-		// TODO
-		$this->cell( 'P19:R19', 'Till', $styles['label'] );
+		$this->cell( 'A18:L18', 'Last 7 years Sea Service Data (Fill in block letters)', $styles['label_centered'] );
+		$this->cell( 'A19:L19', 'Vessel\'s name / Year / Flag / Shipowner\'s name / Country', $styles['label_centered'] );
+		$this->cell( 'M18:N19', 'Rank', $styles['label_centered'] );
+		$this->cell( 'O18:P18', 'From', $styles['label_centered'] );
+		$this->cell( 'O19:P19', 'Till', $styles['label_centered'] );
+		$this->cell( 'Q18:T18', 'Vessel\'s Type', $styles['label_centered'] );
+		$this->cell( 'Q19:T19', 'TEU (cont only)', $styles['label_centered'] );
+		$this->cell( 'U18:V18', 'DWT', $styles['label_centered'] );
+		$this->cell( 'U19:V19', 'GRT', $styles['label_centered'] );
+		$this->cell( 'W18:Y18', 'Engine Type', $styles['label_centered'] );
+		$this->cell( 'W19:Y19', 'HP', $styles['label_centered'] );
+		$this->cell( 'Z18:AD18', 'Crewing', $styles['label_centered'] );
+		$this->cell( 'Z19:AD19', 'Wage', $styles['label_centered'] );
 	}
 
 	/**
