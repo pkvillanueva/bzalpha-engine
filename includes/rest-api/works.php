@@ -195,8 +195,9 @@ class Works {
 		$principal = get_the_terms( $vessel_id, 'principal' );
 
 		if ( $principal && ! is_wp_error( $principal ) ) {
-			$principal     = array_shift( $principal );
-			$data['owner'] = $principal->name;
+			$principal             = array_shift( $principal );
+			$data['owner']         = $principal->name;
+			$data['owner_country'] = get_term_meta( $principal->term_id, 'country', true );
 		}
 
 		$experiences = get_post_meta( $seaman_id, 'experiences', true );
