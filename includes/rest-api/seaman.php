@@ -433,6 +433,7 @@ class Seaman extends Posts_Base {
 							'type'            => [ 'type' => 'string' ],
 							'flag'            => [ 'type' => 'string' ],
 							'owner'           => [ 'type' => 'string' ],
+							'owner_country'   => [ 'type' => 'string' ],
 							'crewing_agency'  => [ 'type' => 'string' ],
 							'engine'          => [ 'type' => 'string' ],
 							'year_built'      => [ 'type' => 'string' ],
