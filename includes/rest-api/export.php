@@ -39,34 +39,45 @@ class Export {
 	public function export_seaman( $request ) {
 		global $wp_filesystem;
 
-		// Include file system.
-		$this->include_filesystem();
-
+		// Get filedir.
 		$upload_dir = $this->get_upload_dir() . '/seaman';
-		$filename   = "{$upload_dir}/{$request['id']}.xlsx";
-		// if ( $wp_filesystem->exists( $filename ) ) {
-		// 	return [ 'hey' ];
-		// }
 
+		// Create if not exists.
 		$wp_filesystem->mkdir( $upload_dir );
-		require_once BZALPHA_INC . 'spreadsheet/seaman.php';
-		$file = new \BZAlpha\Spreadsheet\Seaman( $request['id'], $filename );
 
-		return [];
+		// Require generator.
+		require_once BZALPHA_INC . 'spreadsheet/seaman.php';
+
+		// Create instance.
+		$file = new \BZAlpha\Spreadsheet\Seaman( $request['id'], $upload_dir );
+
+		// Generate file.
+		$file->generate();
+
+		// Create url.
+		$upload_url = $this->get_upload_dir( 'url' ) . '/seaman';
+
+		return [
+			'download' => "{$upload_url}/{$file->filename}",
+		];
 	}
 
 	/**
 	 * Get upload dir.
 	 */
-	private function get_upload_dir() {
+	private function get_upload_dir( $as = 'dir' ) {
 		global $wp_filesystem;
 
 		// Include file system.
 		$this->include_filesystem();
 
 		$upload_dir = wp_get_upload_dir();
-		$dir        = $upload_dir['basedir'] . '/bzalpha';
-		$wp_filesystem->mkdir( $dir );
+		$source     = $as === 'url' ? 'baseurl' : 'basedir';
+		$dir        = $upload_dir[ $source ] . '/bzalpha';
+
+		if ( $as !== 'url' ) {
+			$wp_filesystem->mkdir( $dir );
+		}
 
 		return $dir;
 	}

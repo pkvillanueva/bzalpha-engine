@@ -14,11 +14,11 @@ defined( 'ABSPATH' ) || exit;
 // Define constants.
 define( 'BZALPHA_VERSION', '0.1.0' );
 define( 'BZALPHA_URL', plugin_dir_url( __FILE__ ) );
-define( 'BZALPHA_PATH', plugin_dir_path( __FILE__ ) );
-define( 'BZALPHA_INC', BZALPHA_PATH . 'includes/' );
+define( 'BZALPHA_DIR', plugin_dir_path( __FILE__ ) );
+define( 'BZALPHA_INC', BZALPHA_DIR . 'includes/' );
 
 // Include files.
-require_once BZALPHA_PATH . 'vendor/autoload.php';
+require_once BZALPHA_DIR . 'vendor/autoload.php';
 require_once BZALPHA_INC . 'core.php';
 
 // Setup plugin.
