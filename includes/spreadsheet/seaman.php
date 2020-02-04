@@ -2,9 +2,8 @@
 
 namespace BZAlpha\Spreadsheet;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 /**
  * Export Controller.
@@ -17,9 +16,9 @@ class Seaman {
 	protected $spreadsheet;
 
 	/**
-	 * Sheet.
+	 * Worksheet.
 	 */
-	protected $sheet;
+	protected $worksheet;
 
 	/**
 	 * Post object.
@@ -27,173 +26,274 @@ class Seaman {
 	protected $post;
 
 	/**
+	 * Filepath.
+	 */
+	public $filepath;
+
+	/**
 	 * Filename.
 	 */
-	protected $filename;
+	public $filename;
 
 	/**
 	 * Constructor.
 	 */
-	public function __construct( $post_id, $filename ) {
+	public function __construct( $post_id, $filedir ) {
 		$post = get_post( $post_id );
 		if ( ! $post ) {
 			return new WP_Error( 'post_not_found', __( 'Post not found.', 'bzalpha' ) );
 		}
 
-		$this->spreadsheet = new Spreadsheet();
-		$this->sheet       = $this->spreadsheet->getActiveSheet();
+		$this->spreadsheet = IOFactory::load( BZALPHA_DIR . '/assets/seaman.xlsx' );
+		$this->worksheet   = $this->spreadsheet->getActiveSheet();
 		$this->post        = $post;
-		$this->filename    = $filename;
-		$this->generate();
+
+		$last_name      = $this->get_meta( 'last_name' );
+		$filename       = sanitize_title( "{$last_name}_{$post_id}" ) . '.xlsx';
+		$this->filename = $filename;
+		$this->filepath = "{$filedir}/{$filename}";
 	}
 
 	/**
 	 * Generate file.
 	 */
 	public function generate() {
-		$this->settings();
-		$this->template();
-		$this->styles();
+		$this->render_header();
+		$this->render_avatar();
+		$this->render_relatives();
+		$this->render_experiences();
+		$this->render_educations();
+		$this->render_passports();
+		$this->render_licenses();
+		$this->render_bmi();
 
-		$writer = new Xlsx( $this->spreadsheet );
-		$writer->save( $this->filename );
+		$writer = IOFactory::createWriter( $this->spreadsheet, 'Xlsx' );
+		$writer->save( $this->filepath );
+
+		return $this->filepath;
 	}
 
 	/**
-	 * Sheet settings.
-	 *
-	 * @return void
+	 * Render header.
 	 */
-	public function settings() {
-		$this->spreadsheet->getDefaultStyle()->getFont()->setName( 'Calibri' );
-		$this->spreadsheet->getDefaultStyle()->getFont()->setSize( 10 );
-		$this->sheet->getDefaultColumnDimension()->setWidth( 4 );
-		$this->sheet->getDefaultRowDimension()->setRowHeight( 18 );
-		$this->sheet->getPageSetup()->setFitToWidth( 1 );
-		$this->sheet->getPageSetup()->setFitToHeight( 0 );
+	public function render_header() {
+		$this->cell( 'Y5:AB7', $this->get_meta( 'rank' ) . '-' . $this->post->ID );
+		$this->cell( 'K2:O2', $this->get_meta( 'rank' ) );
+		$this->cell( 'S2:X2', $this->get_date_meta( 'date_available' ) );
+		$this->cell( 'K3:X3', $this->get_meta( 'last_name' ) );
+		$this->cell( 'K4:X4', $this->get_meta( 'first_name' ) );
+		$this->cell( 'K5:O5', $this->get_date_meta( 'birth_date' ) );
+		$this->cell( 'K6:O6', $this->get_meta( 'birth_place' ) );
+		$this->cell( 'K7:O7', $this->get_meta( 'nationality' ) );
+		$this->cell( 'S7:X7', $this->get_meta( 'marital_status' ) );
+
+		$this->cell( 'D9:N9', $this->get_meta( 'phone' ) );
+		$this->cell( 'D10:N10', $this->get_meta( 'phone_2' ) );
+		$this->cell( 'D11:N11', $this->get_meta( 'email' ) );
+		$this->cell( 'D12:N12', $this->get_meta( 'skype' ) );
+
+		$this->cell( 'R9:AB9', $this->get_meta( 'address' ) );
+		$this->cell( 'T10:V10', $this->get_meta( 'zip' ) );
+		$this->cell( 'X10:AB10', $this->get_meta( 'city' ) );
+		$this->cell( 'T11:V11', $this->get_meta( 'state' ) );
+		$this->cell( 'Y11:AB11', $this->get_meta( 'country' ) );
+
+		$this->cell( 'R13:AB13', $this->get_meta( 'address' ) );
+		$this->cell( 'T14:V14', $this->get_meta( 'zip' ) );
+		$this->cell( 'X14:AB14', $this->get_meta( 'city' ) );
+		$this->cell( 'T15:V15', $this->get_meta( 'state' ) );
+		$this->cell( 'Y15:AB15', $this->get_meta( 'country' ) );
+
+		$this->cell( 'L60:P60', $this->get_date_format( date( "d-m-Y", time() ) ) );
+		$this->cell( 'L121:P121', $this->get_date_format( date( "d-m-Y", time() ) ) );
 	}
 
 	/**
-	 * Sheet template.
+	 * Rennder avatar.
 	 */
-	public function template() {
-		$styles['label'] = [
-			'alignment' => [
-				'vertical' => Style\Alignment::VERTICAL_CENTER,
-				'wrapText' => true,
-			],
-			'fill' => [
-				'fillType'   => Style\Fill::FILL_SOLID,
-				'startColor' => [
-					'argb' => 'FF99CCFF',
-				],
-			],
-		];
+	public function render_avatar() {
+		$thumbnail = get_post_thumbnail_id( $this->post->ID );
+		$thumbnail = get_attached_file( $thumbnail );
 
-		$styles['label_centered'] = [
-			'alignment' => [
-				'vertical'   => Style\Alignment::VERTICAL_CENTER,
-				'horizontal' => Style\Alignment::HORIZONTAL_CENTER,
-				'wrapText'   => true,
-			],
-			'fill' => [
-				'fillType'   => Style\Fill::FILL_SOLID,
-				'startColor' => [
-					'argb' => 'FF99CCFF',
-				],
-			],
-		];
+		$drawing = new Drawing();
+		$drawing->setName( $this->post->post_title );
+		$drawing->setPath( $thumbnail );
+		$drawing->setCoordinates( 'A1' );
+		$drawing->setResizeProportional( true );
+		$drawing->setWidth( 157 );
+		$drawing->setOffsetY( 16 );
+		$drawing->setWorksheet( $this->worksheet );
+	}
 
-		$this->cell( 'F1:Y3', 'By signing this application form you agree that BZ ALPHA NAVIGATION INC. may collect, use and disclose your personal data as provided in this application form in accordance with the Personal Data Protection Act 2012 of the Philippines.' );
+	/**
+	 * Render relatives.
+	 */
+	public function render_relatives() {
+		$relatives = $this->get_meta( 'relatives' );
 
-		$this->cell( 'F4:I4', 'Position', $styles['label'] );
+		if ( empty( $relatives ) ) {
+			return;
+		}
 
-		$this->cell( 'J4:O4', $this->get_meta( 'rank' ) );
+		$relative = array_shift( $relatives );
+		$name     = $this->get_value( $relative, 'first_name' );
+		$name    .= ' ' . $this->get_value( $relative, 'last_name' );
 
-		$this->cell( 'P4:S4', 'Date Available', $styles['label'] );
+		$this->cell( 'D13:N13', $name );
+		$this->cell( 'D14:N14', $this->get_value( $relative, 'kin' ) );
+		$this->cell( 'D15:N15', $this->get_value( $relative, 'contact' ) );
+	}
 
-		$this->cell( 'T4:Y4', $this->get_date_meta( 'date_available' ) );
+	/**
+	 * Render experiences.
+	 */
+	public function render_experiences() {
+		$experiences = $this->get_meta( 'experiences' );
 
-		$this->cell( 'F5:I5', 'Surname', $styles['label'] );
+		if ( empty( $experiences ) ) {
+			return;
+		}
 
-		$this->cell( 'J5:Y5', $this->get_meta( 'last_name' ) );
+		$experiences = array_slice( $experiences, 0, 10 );
 
-		$this->cell( 'F6:I6', 'Name', $styles['label'] );
+		// Starting cell.
+		$start = 20;
 
-		$this->cell( 'J6:Y6', $this->get_meta( 'first_name' ) );
+		foreach ( $experiences as $exp ) {
+			$next = $start + 1;
 
-		$this->cell( 'F7:I7', 'Date of Birth', $styles['label'] );
+			$vessel = implode( ' / ', array_filter( [
+				$this->get_value( $exp, 'vessel' ),
+				$this->get_value( $exp, 'year_built' ),
+				$this->get_value( $exp, 'flag' ),
+			] ) );
 
-		$this->cell( 'J7:O7', $this->get_date_meta( 'birth_date' ) );
+			$this->cell( "B{$start}:K{$start}", $vessel );
+			$this->cell( "L{$start}:M{$next}", $this->get_value( $exp, 'rank' ) );
+			$this->cell( "N{$start}:P{$start}", $this->get_date_format( $this->get_value( $exp, 'date_start' ) ) );
+			$this->cell( "Q{$start}:S{$start}", $this->get_value( $exp, 'type' ) );
+			$this->cell( "T{$start}:U{$start}", $this->get_value( $exp, 'dwt' ) );
+			$this->cell( "V{$start}:X{$start}", $this->get_value( $exp, 'engine' ) );
+			$this->cell( "Y{$start}:AB{$start}", $this->get_value( $exp, 'crewing_agency' ) );
 
-		// TODO
-		$this->cell( 'P7:S7', 'Father Name', $styles['label'] );
+			$crewing_agency = implode( ' / ', array_filter( [
+				$this->get_value( $exp, 'owner' ),
+				$this->get_value( $exp, 'owner_country' ),
+			] ) );
 
-		$this->cell( 'T7:Y7', '' );
+			$this->cell( "B{$next}:K{$next}", $crewing_agency );
+			$this->cell( "N{$next}:P{$next}", $this->get_date_format( $this->get_value( $exp, 'date_end' ) ) );
+			$this->cell( "Q{$next}:S{$next}", '0' );
+			$this->cell( "T{$next}:U{$next}", $this->get_value( $exp, 'grt' ) );
+			$this->cell( "V{$next}:X{$next}", $this->get_value( $exp, 'hp' ) );
+			$this->cell( "Y{$next}:AB{$next}", $this->get_value( $exp, 'wage' ) );
 
-		$this->cell( 'F8:I8', 'Place of Birth', $styles['label'] );
+			$start += 2;
+		}
+	}
 
-		$this->cell( 'J8:O8', $this->get_meta( 'birth_place' ) );
+	/**
+	 * Render educations.
+	 */
+	public function render_educations() {
+		$educations = $this->get_meta( 'educations' );
 
-		// TODO
-		$this->cell( 'P8:S8', 'Mother Name', $styles['label'] );
+		if ( empty( $educations ) ) {
+			return;
+		}
 
-		$this->cell( 'T8:Y8', '' );
+		$educations = array_slice( $educations, 0, 3 );
 
-		$this->cell( 'F9:I9', 'Nationality', $styles['label'] );
+		// Starting cell.
+		$start = 42;
 
-		$this->cell( 'J9:O9', $this->get_meta( 'nationality' ) );
+		foreach ( $educations as $educ ) {
+			$this->cell( "A{$start}:E{$start}", $this->get_value( $educ, 'level' ) );
+			$this->cell( "F{$start}:T{$start}", $this->get_value( $educ, 'school' ) );
+			$this->cell( "U{$start}:X{$start}", $this->get_value( $educ, 'from' ) );
+			$this->cell( "Y{$start}:AB{$start}", $this->get_value( $educ, 'to' ) );
 
-		$this->cell( 'P9:S9', 'Marital Status', $styles['label'] );
+			$start += 1;
+		}
+	}
 
-		$this->cell( 'T9:Y9', $this->get_meta( 'marital_status' ) );
+	/**
+	 * Render passports and VISAs.
+	 */
+	public function render_passports() {
+		$passports = $this->get_meta( 'passports' );
 
-		$this->cell( 'A11:D11', 'Phone', $styles['label'] );
+		if ( empty( $passports ) ) {
+			$passports = [];
+		}
 
-		$this->cell( 'E11:L11', $this->get_meta( 'phone' ) );
+		$visas = $this->get_meta( 'visas' );
 
-		$this->cell( 'A12:D12', 'Email', $styles['label'] );
+		if ( empty( $visas ) ) {
+			$visas = [];
+		}
 
-		$this->cell( 'E12:L12', $this->get_meta( 'email' ) );
+		if ( empty( $visas ) && empty( $passports ) ) {
+			return;
+		}
 
-		$this->cell( 'A13:D13', 'Skype', $styles['label'] );
+		// Merge passports and VISAs.
+		$passports = array_merge( $passports, $visas );
 
-		$this->cell( 'E13:L13', $this->get_meta( 'skype' ) );
+		// Get first 12 items.
+		$passports = array_slice( $passports, 0, 12 );
 
-		// TODO
-		$this->cell( 'M11:P13', 'Living Address', $styles['label_centered'] );
+		// Starting cell.
+		$start = 47;
 
-		// TODO
-		$this->cell( 'A14:D14', 'Next Kin', $styles['label'] );
+		foreach ( $passports as $passport ) {
+			$this->cell( "A{$start}:F{$start}", $this->get_value( $passport, 'type' ) );
+			$this->cell( "M{$start}:P{$start}", $this->get_value( $passport, 'num' ) );
+			$this->cell( "Q{$start}:T{$start}", $this->get_date_format( $this->get_value( $passport, 'issue_date' ) ) );
+			$this->cell( "U{$start}:X{$start}", $this->get_value( $passport, 'issued_by' ) );
+			$this->cell( "Y{$start}:AB{$start}", $this->get_date_format( $this->get_value( $passport, 'valid_till' ) ) );
 
-		$this->cell( 'E14:L14', '' );
+			$start += 1;
+		}
+	}
 
-		// TODO
-		$this->cell( 'A15:D15', 'Relation', $styles['label'] );
+	/**
+	 * Render licenses.
+	 */
+	public function render_licenses() {
+		$licenses = $this->get_meta( 'licenses' );
 
-		$this->cell( 'E15:L15', '' );
+		if ( empty( $licenses ) ) {
+			return;
+		}
 
-		// TODO
-		$this->cell( 'A16:D16', 'Phone (Kin)', $styles['label'] );
+		// Get first 31 items.
+		$licenses = array_slice( $licenses, 0, 31 );
 
-		$this->cell( 'E16:L16', '' );
+		// Starting cell.
+		$start = 63;
 
-		// TODO
-		$this->cell( 'M14:P16', 'Registration Address', $styles['label_centered'] );
+		foreach ( $licenses as $license ) {
+			$this->cell( "A{$start}:L{$start}", $this->get_value( $license, 'name' ) );
+			$this->cell( "M{$start}:P{$start}", $this->get_value( $license, 'num' ) );
+			$this->cell( "Q{$start}:T{$start}", $this->get_date_format( $this->get_value( $license, 'issue_date' ) ) );
+			$this->cell( "U{$start}:X{$start}", $this->get_value( $license, 'issued_by' ) );
+			$this->cell( "Y{$start}:AB{$start}", $this->get_date_format( $this->get_value( $license, 'valid_until' ) ) );
 
-		$this->cell( 'A18:L18', 'Last 7 years Sea Service Data (Fill in block letters)', $styles['label_centered'] );
-		$this->cell( 'A19:L19', 'Vessel\'s name / Year / Flag / Shipowner\'s name / Country', $styles['label_centered'] );
-		$this->cell( 'M18:N19', 'Rank', $styles['label_centered'] );
-		$this->cell( 'O18:P18', 'From', $styles['label_centered'] );
-		$this->cell( 'O19:P19', 'Till', $styles['label_centered'] );
-		$this->cell( 'Q18:T18', 'Vessel\'s Type', $styles['label_centered'] );
-		$this->cell( 'Q19:T19', 'TEU (cont only)', $styles['label_centered'] );
-		$this->cell( 'U18:V18', 'DWT', $styles['label_centered'] );
-		$this->cell( 'U19:V19', 'GRT', $styles['label_centered'] );
-		$this->cell( 'W18:Y18', 'Engine Type', $styles['label_centered'] );
-		$this->cell( 'W19:Y19', 'HP', $styles['label_centered'] );
-		$this->cell( 'Z18:AD18', 'Crewing', $styles['label_centered'] );
-		$this->cell( 'Z19:AD19', 'Wage', $styles['label_centered'] );
+			$start += 1;
+		}
+	}
+
+	/**
+	 * Render BMI.
+	 */
+	public function render_bmi() {
+		$this->cell( "A112:E112", $this->get_meta( 'weight' ) );
+		$this->cell( "F112:J112", $this->get_meta( 'height' ) );
+		$this->cell( "K112:O112", $this->get_meta( 'overall_size' ) );
+		$this->cell( "P112:T112", $this->get_meta( 'shoes_size' ) );
+		$this->cell( "U112:X112", $this->get_meta( 'hair_color' ) );
+		$this->cell( "Y112:AB112", $this->get_meta( 'eyes_color' ) );
 	}
 
 	/**
@@ -202,17 +302,16 @@ class Seaman {
 	public function cell( $range, $value = null, $styles = [] ) {
 		$cells = explode( ':', $range );
 
-		$this->sheet->mergeCells( $range );
-		$this->sheet->setCellValue( $cells[0], $value );
-		$this->sheet->getStyle( $range )->applyFromArray( $styles );
+		$this->worksheet->mergeCells( $range );
+		$this->worksheet->setCellValue( $cells[0], $value );
+		$this->worksheet->getStyle( $range )->applyFromArray( $styles );
 	}
 
 	/**
-	 * Sheet styles.
+	 * Get value from array.
 	 */
-	public function styles() {
-		$this->sheet->getStyle( 'F1:U4' )->getAlignment()->setWrapText( true );
-		$this->sheet->getStyle( 'F1:U4' )->getAlignment()->setVertical( Style\Alignment::VERTICAL_CENTER );
+	public function get_value( $source, $key ) {
+		return isset( $source[ $key ] ) ? $source[ $key ] : '';
 	}
 
 	/**
@@ -227,6 +326,13 @@ class Seaman {
 	 */
 	public function get_date_meta( $key ) {
 		$value = $this->get_meta( $key );
+		return $this->get_date_format( $value );
+	}
+
+	/**
+	 * Get formatted date.
+	 */
+	public function get_date_format( $value ) {
 		return ! empty( $value ) ? date( "d-m-Y", strtotime( $value ) ) : null;
 	}
 }
