@@ -114,6 +114,9 @@ class Seaman {
 	public function render_avatar() {
 		$thumbnail = get_post_thumbnail_id( $this->post->ID );
 		$thumbnail = get_attached_file( $thumbnail );
+		if ( ! $thumbnail ) {
+			return;
+		}
 
 		$drawing = new Drawing();
 		$drawing->setName( $this->post->post_title );
